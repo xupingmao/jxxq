@@ -11,8 +11,9 @@ var platformHeight, platformLength, gapLength;
 var playSound;
 var platformBase;
 var frames = 0;
-var gameStartTime = new Date();
 var enableDebug = true;
+var fpsCounter;
+var canvasBuffer;
 
 var canUseLocalStorage = 'localStorage' in window && window.localStorage !== null;
 
@@ -37,6 +38,9 @@ function gameInit() {
       $('.sound').addClass('sound-off').removeClass('sound-on');
     }
   }
+
+  fpsCounter    = new FpsCounter();
+  canvasBuffer  = new CanvasBuffer();
 }
 
 /**
@@ -396,7 +400,9 @@ var player = (function(player) {
   // add properties directly to the player imported object
   player.width     = 60;
   player.height    = 96;
-  player.speed     = 6;
+  // 玩家速度
+  // player.speed     = 6;
+  player.speed     = 1;
 
   // jumping
   player.gravity   = 1;
@@ -406,6 +412,7 @@ var player = (function(player) {
   player.isJumping = false;
 
   // spritesheets
+  // 这个时候还是string,真是坑爹==
   player.sheet     = new SpriteSheet(assetLoader.imgs.avatar_normal);
   player.walkAnim  = new Animation(player.sheet, 4, 0, 15);
   player.jumpAnim  = new Animation(player.sheet, 4, 15, 15);
@@ -722,8 +729,12 @@ function animate() {
   if (!stop) {
     
     requestAnimFrame( animate );
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvasBuffer.context.clearRect(0, 0, canvas.width, canvas.height);
 
+    var displayContext = ctx;
+    // 交换缓冲
+    ctx = canvasBuffer.context;
     background.draw();
 
     // update entities
@@ -736,9 +747,8 @@ function animate() {
     // draw the score
     ctx.fillText('得分: ' + score + 'm', canvas.width - 140, 30);
     if (enableDebug) {
-      frames++;
-      var fps = frames / (new Date() - gameStartTime) * 1000;
-      ctx.fillText('FPS:' + parseInt(fps), canvas.width - 140, 60);
+      fpsCounter.count();
+      ctx.fillText('FPS:' + fpsCounter.getFps(), canvas.width - 140, 60);
     }
 
     // spawn a new Sprite
@@ -767,6 +777,11 @@ function animate() {
     }
 
     ticker++;
+
+    displayContext.clearRect(0, 0, canvas.width, canvas.height);
+    // 渲染图形
+    displayContext.drawImage(canvasBuffer.canvas, 0, 0);
+    ctx = displayContext;
   }
 }
 
@@ -806,12 +821,18 @@ $(document).on("touchend", function() {
  * Request Animation Polyfill
  */
 var requestAnimFrame = (function(){
+  // return  function(callback, element){
+  //           // 动画的帧率
+  //           window.setTimeout(callback, 1000 / 200);
+  //         };
+
   return  window.requestAnimationFrame       ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame    ||
           window.oRequestAnimationFrame      ||
           window.msRequestAnimationFrame     ||
           function(callback, element){
+            // 动画的帧率
             window.setTimeout(callback, 1000 / 60);
           };
 })();
