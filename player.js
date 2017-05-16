@@ -27,6 +27,7 @@ function PlayerClass() {
     this.height = 64;
     this.x = 100;
     this.y = globalConf.height - this.height - globalConf.roadHeight;
+    this.originY = this.y;
 
     this.dx = 0;
     this.dy = 0;
@@ -34,7 +35,7 @@ function PlayerClass() {
 
     this.isJumping  = false;
     this.isFalling  = false;
-    this.gravity    = 1;
+    this.gravity    = 5;
     this.roadHeight = globalConf.roadHeight;
 }
 
@@ -50,18 +51,23 @@ PlayerClass.prototype.update = function (timeInfo) {
     if (KEY_STATUS.space && !player.isJumping) {
         this.isJumping   = true;
         // this.jumpCounter = 12;
-        this.dy          = -20;
+        this.dy          = -30;
         this.originY     = this.y;
+        // vt = 1/2 * a * t ^ 2
+        // v  = 1/2 * a * t
+        // t  = 15  半秒左右
         assetLoader.sounds.jump.play();
     }
 
     // jump higher if the space bar is continually pressed
-    else if (KEY_STATUS.space && jumpCounter) {
-        player.dy = player.jumpDy;
-        this.isJumping = true;
-    } else {
-        player.dy = 0;
-    }
+    // else if (KEY_STATUS.space && jumpCounter) {
+    //     player.dy = player.jumpDy;
+    //     this.isJumping = true;
+    // } 
+
+    // else {
+    //     player.dy = 0;
+    // }
 
     // this.x += this.dx;
     // this.y += this.dy;
@@ -72,14 +78,15 @@ PlayerClass.prototype.update = function (timeInfo) {
     // }
 
     // this.dy += this.gravity;
+    this.y += this.dy;
 
-    this.y  += this.dy;
-
-    if (this.y <= this.originY) {    
+    if (this.y < this.originY) {    
         this.dy += this.gravity;
         jumpCounter--;
     } else {
+        // 触到地板
         this.dy = 0;
+        this.y  = this.originY;
         this.isJumping = false;
     }
 

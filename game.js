@@ -54,10 +54,6 @@ function gameInit() {
 
   /** Quark 舞台 **/
   var container = Q.getDOM("container");
-  // canvas = Quark.createDOM("canvas",{ id:"canvas", width: 600, height:480});
-  // canvas.style.width = "100%";
-  // canvas.style.height = "100%";
-  // container.appendChild(canvas);
 
   window.canvas = canvas;
   context = new Quark.CanvasContext({canvas:canvas});
@@ -79,9 +75,31 @@ function gameInit() {
   var em = new Q.EventManager();
   var events = Q.supportTouch ? ["touchend"] : ["mousedown","mouseup","mousemove","mouseout"];
   em.registerStage(stage, events, true, true);
-
-  platformBase = canvas.height - platformWidth;  // bottom row of the game
   
+  stage.em = em;
+
+  function touchEventCallback (event) {
+      console.log(event);
+
+      // alert(event.eventX);
+
+      var width  = $("#canvas").width();
+      var height = $("#canvas").height();
+
+      // 浏览器只有eventX
+      var x = event.eventX;
+      var y = event.eventY;
+
+      // alert(x);
+
+      if (x < width / 3) {
+          KEY_STATUS["space"] = true;
+          setTimeout(function () { KEY_STATUS["space"] = false; }, 200);
+      }
+  }
+
+  stage.on("touchend", touchEventCallback);
+  stage.on("mouseup",  touchEventCallback);
 
   // set the sound preference
   if (canUseLocalStorage) {
@@ -189,11 +207,6 @@ document.onkeyup = function(e) {
   }
 };
 
-$(document).on("touchend", function() {
-  KEY_STATUS["space"] = true;
-  setTimeout(function () { KEY_STATUS["space"] = false; }, 200);
-})
-
 /**
  * Request Animation Polyfill
  */
@@ -254,6 +267,11 @@ function startGame() {
   assetLoader.sounds.bg.currentTime = 0;
   assetLoader.sounds.bg.loop = true;
   assetLoader.sounds.bg.play();
+
+  // $(document).on("touchend", function() {
+  //   KEY_STATUS["space"] = true;
+  //   setTimeout(function () { KEY_STATUS["space"] = false; }, 200);
+  // })
 }
 
 /**
