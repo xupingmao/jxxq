@@ -5,6 +5,7 @@ var assetLoader = (function() {
   // images dictionary
   this.imgs        = {
     'bg'            : 'imgs/bg.jpg',
+    'bg_old'        : 'imgs/bg_old.png',
     'sky'           : 'imgs/sky.png',
     'backdrop'      : 'imgs/backdrop.png',
     'backdrop2'     : 'imgs/backdrop_ground.png',

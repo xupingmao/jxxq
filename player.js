@@ -5,11 +5,100 @@
  * The player Class
  */
 
-function PlayerClass(props) {
+function PlayerClass() {
+    var img = assetLoader.imgs.avatar_normal;
+    var props = {};
+
+    props.image = img;
+    // props.width  = img.width;
+    // props.height = img.height;
     PlayerClass.superClass.constructor.call(this, props);
+
+    this.image       = assetLoader.imgs.avatar_normal;
+    this.jumpCounter = 0;
+
+
+    this.rectX  = 0;
+    this.rectY  = 0;
+    this.rectWidth  = img.width / 4;
+    this.rectHeight = img.height / 4;
+
+    this.width  = 32;
+    this.height = 64;
+    this.x = 100;
+    this.y = globalConf.height - this.height - globalConf.roadHeight;
+
+    this.dx = 0;
+    this.dy = 0;
+    this.jumpDy = 5;
+
+    this.isJumping  = false;
+    this.isFalling  = false;
+    this.gravity    = 1;
+    this.roadHeight = globalConf.roadHeight;
 }
 
-Q.inherit(PlayerClass, Q.DisplayObjectContainer);
+Q.inherit(PlayerClass, Q.Bitmap);
+
+PlayerClass.prototype.update = function (timeInfo) {
+    var player = this;
+    var jumpCounter = this.jumpCounter;
+
+    // return;
+
+    // jump if not currently jumping or falling
+    if (KEY_STATUS.space && !player.isJumping) {
+        this.isJumping   = true;
+        // this.jumpCounter = 12;
+        this.dy          = -20;
+        this.originY     = this.y;
+        assetLoader.sounds.jump.play();
+    }
+
+    // jump higher if the space bar is continually pressed
+    else if (KEY_STATUS.space && jumpCounter) {
+        player.dy = player.jumpDy;
+        this.isJumping = true;
+    } else {
+        player.dy = 0;
+    }
+
+    // this.x += this.dx;
+    // this.y += this.dy;
+
+    // add gravity
+    // if (this.isFalling || this.isJumping) {
+    //   this.dy += this.gravity;
+    // }
+
+    // this.dy += this.gravity;
+
+    this.y  += this.dy;
+
+    if (this.y <= this.originY) {    
+        this.dy += this.gravity;
+        jumpCounter--;
+    } else {
+        this.dy = 0;
+        this.isJumping = false;
+    }
+
+    // change animation if falling
+    if (player.dy > 0) {
+      player.anim = player.fallAnim;
+    }
+    // change animation is jumping
+    else if (player.dy < 0) {
+      player.anim = player.jumpAnim;
+    }
+    else {
+      player.anim = player.walkAnim;
+    }
+
+    this.jumpCounter = jumpCounter;
+
+    return true;
+}
 
 /**
  * The player object

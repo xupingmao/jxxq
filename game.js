@@ -20,10 +20,24 @@ var canUseLocalStorage = 'localStorage' in window && window.localStorage !== nul
 
 /** 游戏舞台 **/
 var GameStage = function (props) {
-    props.width = "100%";
-    props.height = "100%";
+    // props.width = "100%";
+    // props.height = "100%";
+
+    var width = 640;
+    var height = 480;
+
+    var displayWidth  = width;
+    var displayHeight = height;
+
+    props.width  = width;
+    props.height = height;
+    props.scaleX = displayWidth / width;
+    props.scaleY = displayHeight / height;
 
     GameStage.superClass.constructor.call(this, props);
+
+    this._scaleX = 1;
+    this._scaleY = 1;
     this.frames = 0;
 }
 
@@ -154,6 +168,7 @@ var KEY_CODES = {
   32: 'space'
 };
 var KEY_STATUS = {};
+window.KEY_STATUS = KEY_STATUS;
 for (var code in KEY_CODES) {
   if (KEY_CODES.hasOwnProperty(code)) {
      KEY_STATUS[KEY_CODES[code]] = false;
@@ -229,7 +244,7 @@ function startGame() {
 
   stage.removeAllChildren();
   stage.addChild(background);
-  // stage.addChild(player);
+  stage.addChild(player);
   // animate();
 
   quark_timer.addListener(stage);   // 舞台刷新
