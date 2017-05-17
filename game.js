@@ -22,17 +22,30 @@ var canUseLocalStorage = 'localStorage' in window && window.localStorage !== nul
 var GameStage = function (props) {
     // props.width = "100%";
     // props.height = "100%";
+    var canvasWidth = $("#canvas").width();
+    var canvasHeight = $("#canvas").height();
 
-    var width = 640;
-    var height = 480;
+    var width = Math.min(640, canvasWidth);
+    // var ratio = 480 / 640;
+    var ratio  = canvasHeight / canvasWidth;
+    var height = width * ratio;
 
     var displayWidth  = width;
     var displayHeight = height;
 
+    globalConf.width = width;
+    globalConf.height = height;
+    globalConf.update();
+
+    console.log(width, height);
+
     props.width  = width;
     props.height = height;
-    props.scaleX = displayWidth / width;
-    props.scaleY = displayHeight / height;
+    props.scaleX = 1;
+    props.scaleY = 1;
+
+    $("#canvas").attr("width", width);
+    $("#canvas").attr("height", height);
 
     GameStage.superClass.constructor.call(this, props);
 
@@ -93,8 +106,13 @@ function gameInit() {
       // alert(x);
 
       if (x < width / 3) {
+        // 左侧1/3
           KEY_STATUS["space"] = true;
           setTimeout(function () { KEY_STATUS["space"] = false; }, 200);
+      } else {
+          var _x = x / width * globalConf.width;
+          var _y = y / height * globalConf.height;
+          KEY_STATUS["fireBullet"] = {x: _x, y: _y};
       }
   }
 
@@ -115,77 +133,15 @@ function gameInit() {
 }
 
 /**
- * Game loop
- * 游戏主循环
- */
-function animate() {
-  if (!stop) {
-    
-    requestAnimFrame( animate );
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // canvasBuffer.context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // var displayContext = ctx;
-    // 交换缓冲
-    // ctx = canvasBuffer.context;
-    background.draw();
-
-    // update entities
-    updateWater();
-    updateEnvironment();
-    updatePlayer();
-    // stage.update();
-    updateGround();
-    updateEnemies();
-
-    // draw the score
-    ctx.fillText('得分: ' + score + 'm', canvas.width - 140, 30);
-    if (enableDebug) {
-      fpsCounter.count();
-      ctx.fillText('FPS:' + fpsCounter.getFps(), canvas.width - 140, 60);
-    }
-
-    // spawn a new Sprite
-    if (ticker % Math.floor(platformWidth / player.speed) === 0) {
-      spawnSprites();
-    }
-
-    // increase player speed only when player is jumping
-    if (ticker > (Math.floor(platformWidth / player.speed) * player.speed * 20) && player.dy !== 0) {
-      player.speed = bound(++player.speed, 0, 15);
-      player.walkAnim.frameSpeed = Math.floor(platformWidth / player.speed) - 1;
-
-      // reset ticker
-      ticker = 0;
-
-      // spawn a platform to fill in gap created by increasing player speed
-      if (gapLength === 0) {
-        var type = getType();
-        ground.push(new Sprite(
-          canvas.width + platformWidth % player.speed,
-          platformBase - platformHeight * platformSpacer,
-          type
-        ));
-        platformLength--;
-      }
-    }
-
-    ticker++;
-
-    // displayContext.clearRect(0, 0, canvas.width, canvas.height);
-    // 渲染图形
-    // displayContext.drawImage(canvasBuffer.canvas, 0, 0);
-    // ctx = displayContext;
-  }
-}
-
-/**
  * Keep track of the spacebar events
  */
 var KEY_CODES = {
   32: 'space'
 };
-var KEY_STATUS = {};
+var KEY_STATUS = {
+    "space": false,
+    "fireBullet": undefined
+};
 window.KEY_STATUS = KEY_STATUS;
 for (var code in KEY_CODES) {
   if (KEY_CODES.hasOwnProperty(code)) {
@@ -206,26 +162,6 @@ document.onkeyup = function(e) {
     KEY_STATUS[KEY_CODES[keyCode]] = false;
   }
 };
-
-/**
- * Request Animation Polyfill
- */
-var requestAnimFrame = (function(){
-  // return  function(callback, element){
-  //           // 动画的帧率
-  //           window.setTimeout(callback, 1000 / 1);
-  //         };
-
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          function(callback, element){
-            // 动画的帧率
-            window.setTimeout(callback, 1000 / 60);
-          };
-})();
 
 /**
  * Show the main menu after loading all assets

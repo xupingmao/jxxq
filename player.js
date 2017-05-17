@@ -104,7 +104,24 @@ PlayerClass.prototype.update = function (timeInfo) {
 
     this.jumpCounter = jumpCounter;
 
+    if (KEY_STATUS["fireBullet"]) {
+        var event = KEY_STATUS["fireBullet"];
+        KEY_STATUS["fireBullet"] = undefined;
+        this.fireBullet(event.x, event.y);
+    }
+
     return true;
+}
+
+PlayerClass.prototype.fireBullet = function (targetX, targetY) {
+    var cx = this.x + this.width / 2;
+    var cy = this.y + this.height / 2;
+    var bullet = new Bullet({cx: cx, cy: cy});
+    bullet.attack(targetX, targetY);
+    console.log(targetX, targetY);
+    stage.addChild(bullet);
+
+    assetLoader.sounds.bullet_attack.play();
 }
 
 /**

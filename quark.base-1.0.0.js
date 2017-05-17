@@ -3257,8 +3257,12 @@ Bitmap.prototype.setRect = function(rect)
 {
 	this.rectX = rect[0];
 	this.rectY = rect[1];
-	this.rectWidth = this.width = rect[2];
-	this.rectHeight = this.height = rect[3];
+	// 不懂这里逻辑
+	// this.rectWidth = this.width = rect[2];
+	// this.rectHeight = this.height = rect[3];
+
+	this.rectWidth = rect[2];
+	this.rectHeight = rect[3];
 };
 
 /**

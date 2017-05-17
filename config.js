@@ -19,3 +19,14 @@ globalConf.backdrop2Width  = 800;
 globalConf.backdrop2Height = 480;
 
 globalConf.roadHeight = 100;
+
+globalConf.bulletWidth = 16;
+globalConf.bulletHeight = 16;
+
+globalConf.update = function () {
+    globalConf.roadHeight = globalConf.height / 4;
+    globalConf.bgWidth = globalConf.height  / 1300 * 3840;
+    globalConf.bgHeight = globalConf.height;
+    
+}
+

@@ -2,34 +2,36 @@
  * Asset pre-loader object. Loads all images
  */
 var assetLoader = (function() {
-  // images dictionary
-  this.imgs        = {
-    'bg'            : 'imgs/bg.jpg',
-    'bg_old'        : 'imgs/bg_old.png',
-    'sky'           : 'imgs/sky.png',
-    'backdrop'      : 'imgs/backdrop.png',
-    'backdrop2'     : 'imgs/backdrop_ground.png',
-    'grass'         : 'imgs/grass.png',
-    // 'avatar_normal' : 'imgs/normal_walk.png',
-    'avatar_normal' : 'imgs/actor_nzj.png',
-    'water'         : 'imgs/water.png',
-    'grass1'        : 'imgs/grassMid1.png',
-    'grass2'        : 'imgs/grassMid2.png',
-    'bridge'        : 'imgs/bridge.png',
-    'plant'         : 'imgs/plant.png',
-    'bush1'         : 'imgs/bush1.png',
-    'bush2'         : 'imgs/bush2.png',
-    'cliff'         : 'imgs/grassCliffRight.png',
-    'spikes'        : 'imgs/spikes.png',
-    'box'           : 'imgs/boxCoin.png',
-    'slime'         : 'imgs/slime.png'
-  };
+    // images dictionary
+    this.imgs = {
+        'bg': 'imgs/bg.jpg',
+        'bg_old': 'imgs/bg_old.png',
+        'sky': 'imgs/sky.png',
+        'backdrop': 'imgs/backdrop.png',
+        'backdrop2': 'imgs/backdrop_ground.png',
+        'grass': 'imgs/grass.png',
+        // 'avatar_normal' : 'imgs/normal_walk.png',
+        'avatar_normal': 'imgs/actor_nzj.png',
+        'water': 'imgs/water.png',
+        'grass1': 'imgs/grassMid1.png',
+        'grass2': 'imgs/grassMid2.png',
+        'bridge': 'imgs/bridge.png',
+        'plant': 'imgs/plant.png',
+        'bush1': 'imgs/bush1.png',
+        'bush2': 'imgs/bush2.png',
+        'cliff': 'imgs/grassCliffRight.png',
+        'spikes': 'imgs/spikes.png',
+        'box': 'imgs/boxCoin.png',
+        'slime': 'imgs/slime.png',
+        'bullet': 'imgs/bullet.png',
+    };
 
   // sounds dictionary
   this.sounds      = {
     'bg'            : 'sounds/bg.mp3',
     'jump'          : 'sounds/jump.mp3',
-    'gameOver'      : 'sounds/gameOver.mp3'
+    'gameOver'      : 'sounds/gameOver.mp3',
+      'bullet_attack': 'sounds/bullet_attack.wav'
   };
 
   var assetsLoaded = 0;                                // how many assets have been loaded

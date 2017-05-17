@@ -45,7 +45,7 @@ BackgroundImage.prototype.update = function (timeInfo) {
     this.x -= this.speed;
 
     if (this.x + this.width <= 0) {
-        this.x = this.width;
+        this.x = Math.max(this.width, globalConf.width);
     }
 
     return true;
@@ -92,6 +92,7 @@ function BackgroundClass(props) {
 
     // 最远景
     this.addChild(this.bg);
+    this.addChild(this.bg_2);
     this.addChild(this.sky);
     this.addChild(this.backdrop);
     this.addChild(this.backdrop2);
