@@ -64,7 +64,8 @@ a {
 }
 #menu.main {
   background-image: url('imgs/menu-bg.png');
-  background-repeat: repeat-x;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 #menu.credits {
   background-image: url('imgs/credits-bg.png');

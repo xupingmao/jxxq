@@ -51,6 +51,38 @@ BackgroundImage.prototype.update = function (timeInfo) {
     return true;
 }
 
+
+function ScrollableClass() {
+    var props = {};
+    ScrollableClass.superClass.constructor.call(this, props);
+}
+Q.inherit(ScrollableClass, Q.DisplayObjectContainer);
+
+ScrollableClass.prototype.update = function (timeInfo) {
+
+    return true;
+}
+
+function Road() {
+    var props = {};
+    Road.prototype.constructor.call(this, props);
+
+    this.roadBoxList = [];
+    this.roadBoxLength = parseInt(globalConf.width / globalConf.roadBoxWidth) + 2;
+
+    for (var i = 0; i < this.roadBoxLength; i++) {
+
+    }
+}
+Q.inherit(Road, Q.DisplayObjectContainer);
+
+Road.prototype.update = function (timeInfo) {
+    if (this.x < -globalConf.roadBoxWidth) {
+        this.removeChildAt(0);
+    }
+    return true;
+}
+
 // DisplayObject._render会进行转换
 // BackgroundImage.prototype.render = function (context) {
 //     context.draw(this, this.rectX, this.rectY, this.rectWidth, this.rectHeight, 
@@ -75,14 +107,21 @@ function BackgroundClass(props) {
 
 
     this.sky = new BackgroundImage(assetLoader.imgs.sky,
-        0, 100, globalConf.skyWidth, globalConf.skyHeight, 0.2);
+        0, 0, globalConf.skyWidth, globalConf.skyHeight, 0.2);
+
+    this.sky_2 = new BackgroundImage(assetLoader.imgs.sky,
+        globalConf.skyWidth, 0, globalConf.skyWidth, globalConf.skyHeight, 0.2);
 
     // this.sky = newBitmap(assetLoader.imgs.sky);
     // this.sky.speed = 0.2;
 
     this.backdrop = new BackgroundImage(assetLoader.imgs.backdrop,
         0, globalConf.height - globalConf.backdropHeight, 
-        globalConf.backdropWidth, globalConf.backdropHeight, 0.4);
+        globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
+
+    this.backdrop_2 = new BackgroundImage(assetLoader.imgs.backdrop,
+        globalConf.backdropWidth, globalConf.height - globalConf.backdropHeight,
+        globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
 
     this.backdrop2 = new BackgroundImage(assetLoader.imgs.backdrop2,
         0, 0, globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
@@ -94,7 +133,9 @@ function BackgroundClass(props) {
     this.addChild(this.bg);
     this.addChild(this.bg_2);
     this.addChild(this.sky);
+    this.addChild(this.sky_2);
     this.addChild(this.backdrop);
+    this.addChild(this.backdrop_2);
     this.addChild(this.backdrop2);
     this.addChild(this.backdrop2_2);
     // this.addChild(new SkyClass());
@@ -102,6 +143,11 @@ function BackgroundClass(props) {
 
 // 必须先继承，然后再实现其他方法
 Q.inherit(BackgroundClass, Q.DisplayObjectContainer);
+
+BackgroundClass.prototype.getY = function () {
+    // 道路的位置
+    return  globalConf.height - stage.player.height - 10;
+}
 
 // BackgroundClass.prototype.update = function (timeInfo) {
     // this.sky.x -= this.sky.speed;
