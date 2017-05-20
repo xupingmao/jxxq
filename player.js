@@ -23,8 +23,8 @@ function PlayerClass() {
     this.rectWidth  = img.width / 4;
     this.rectHeight = img.height / 4;
 
-    this.width  = 32;
-    this.height = 64;
+    this.width  = globalConf.playerWidth;
+    this.height = globalConf.playerHeight;
     this.x = 100;
     this.y = globalConf.height - this.height - globalConf.roadHeight;
     this.originY = this.y;
@@ -53,7 +53,7 @@ PlayerClass.prototype.update = function (timeInfo) {
     if (KEY_STATUS.space && !player.isJumping) {
         this.isJumping   = true;
         // this.jumpCounter = 12;
-        this.dy          = -30;
+        this.dy          = -40;
         // vt = 1/2 * a * t ^ 2
         // v  = 1/2 * a * t
         // t  = 15  半秒左右
@@ -81,14 +81,16 @@ PlayerClass.prototype.update = function (timeInfo) {
     // this.dy += this.gravity;
     this.y += this.dy;
 
-    var groundY = stage.background.getY();
-    if (this.y < groundY) {
+    var groundY = stage.background.getY(this);
+
+    var footY = this.y + this.height;
+    if (footY < groundY) {
         this.dy += this.gravity;
-        jumpCounter--;
+        // jumpCounter--;
     } else {
         // 触到地板
         this.dy = 0;
-        this.y  = groundY;
+        this.y  = groundY - this.height;
         this.isJumping = false;
     }
 

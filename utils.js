@@ -58,3 +58,14 @@ function bound(num, low, high) {
   return Math.max( Math.min(num, high), low);
 }
 
+
+/**
+ * 检测X坐标是否在容器范围内
+ * @param rangeObj
+ * @param target
+ * @returns {boolean}
+ */
+function checkInXRange(rangeObj, target) {
+    var x = target.x;
+    return x >= rangeObj.x && x <= (rangeObj.x + rangeObj.width);
+}

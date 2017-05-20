@@ -63,22 +63,49 @@ ScrollableClass.prototype.update = function (timeInfo) {
     return true;
 }
 
-function Road() {
+function RoadClass(image, grassCount, x, y) {
     var props = {};
-    Road.prototype.constructor.call(this, props);
+    RoadClass.superClass.constructor.call(this, props);
 
-    this.roadBoxList = [];
-    this.roadBoxLength = parseInt(globalConf.width / globalConf.roadBoxWidth) + 2;
+    this.width = grassCount * globalConf.grassWidth;
+    this.grassCount = grassCount;
 
-    for (var i = 0; i < this.roadBoxLength; i++) {
+    var grassHeight = globalConf.grassHeight;
 
+    for (var i = 0; i < this.grassCount; i++) {
+        var grass = newBitmap(image);
+        grass.width = globalConf.grassWidth;
+        grass.height = grassHeight;
+        grass.x = i * globalConf.grassWidth;
+        this.addChild(grass);
     }
-}
-Q.inherit(Road, Q.DisplayObjectContainer);
 
-Road.prototype.update = function (timeInfo) {
-    if (this.x < -globalConf.roadBoxWidth) {
-        this.removeChildAt(0);
+    this.x = x;
+    this.y = y;
+    this.height = grassHeight;
+
+    this.speed = globalConf.grassSpeed;
+}
+Q.inherit(RoadClass, Q.DisplayObjectContainer);
+
+RoadClass.prototype.update = function (timeInfo) {
+    this.x -= this.speed;
+    if (this.x + this.width < 0) {
+        this.parent.removeRoad(this);
+    }
+    return true;
+}
+
+WaterClass = function (image, grassCount, x, y) {
+    WaterClass.superClass.constructor.call(this, image, grassCount, x, y);
+}
+Q.inherit(WaterClass, RoadClass);
+
+WaterClass.prototype.update = function (timeInfo) {
+    this.x -= this.speed;
+    if (this.x + this.width <= 0) {
+        this.x = this.width;
+        console.log("width=" + this.width);
     }
     return true;
 }
@@ -127,7 +154,8 @@ function BackgroundClass(props) {
         0, 0, globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
 
     this.backdrop2_2 = new BackgroundImage(assetLoader.imgs.backdrop2,
-        globalConf.backdrop2Width, 0, globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
+        globalConf.backdrop2Width, 0,
+        globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
 
     // 最远景
     this.addChild(this.bg);
@@ -138,15 +166,66 @@ function BackgroundClass(props) {
     this.addChild(this.backdrop_2);
     this.addChild(this.backdrop2);
     this.addChild(this.backdrop2_2);
-    // this.addChild(new SkyClass());
+
+    this.addChild(new WaterClass(assetLoader.imgs.water,
+        30, 0, globalConf.height - globalConf.grassHeight));
+    this.addChild(new WaterClass(assetLoader.imgs.water,
+        30, 30 * globalConf.grassWidth, globalConf.height - globalConf.grassHeight));
+
+    // 道路
+
+    this.roadList = [];
+    this.addRoad(new RoadClass(assetLoader.imgs.grass,
+        20, 0, globalConf.height - globalConf.grassHeight));
 }
 
 // 必须先继承，然后再实现其他方法
 Q.inherit(BackgroundClass, Q.DisplayObjectContainer);
 
-BackgroundClass.prototype.getY = function () {
-    // 道路的位置
-    return  globalConf.height - stage.player.height - 10;
+BackgroundClass.prototype.addRoad = function (road) {
+    this.roadList.push(road);
+    this.addChild(road);
+    console.log("add road " + road);
+}
+
+BackgroundClass.prototype.removeRoad = function (road) {
+    this.removeChild(road);
+    var index = this.roadList.indexOf(road);
+    this.roadList.splice(index, 1);
+    console.log(road + " removed");
+}
+
+BackgroundClass.prototype.addRandRoad = function () {
+    var x = globalConf.width;
+    var maxY = globalConf.height - globalConf.grassHeight;
+    var randHeight = rand(maxY - globalConf.playerHeight, maxY);
+    this.addRoad(new RoadClass(assetLoader.imgs.grass, rand(10,20), x, randHeight));
+}
+
+BackgroundClass.prototype.update = function (timeInfo) {
+    if (this.roadList.length == 0) {
+        this.addRandRoad();
+    } else if (this.roadList.length == 1){
+        // 创建新的随机road
+        var lastRoad = this.roadList[this.roadList.length-1];
+        var endRange = globalConf.width - lastRoad.x - lastRoad.width;
+        if (endRange >= globalConf.maxStepWidth) {
+            this.addRandRoad();
+            console.log("rand overflow")
+        }
+    }
+    return true;
+}
+
+BackgroundClass.prototype.getY = function (target) {
+    // TODO 判断道路的位置
+    for (var i = 0; i < this.roadList.length; i++) {
+        var road = this.roadList[i];
+        if ( checkInXRange(road, target) ) {
+            return road.y;
+        }
+    }
+    return  globalConf.height;
 }
 
 // BackgroundClass.prototype.update = function (timeInfo) {
@@ -191,71 +270,4 @@ SkyClass.prototype.render = function (ctx) {
 
     if (this.x + assetLoader.imgs.sky.width <= 0)
       this.x = 0;
-}
-
-// BackgroundClass.prototype.render = function (ctx) {
-//     this.x -= 0.5;
-//     ctx.draw(this, this.x, this.y, canvas.width, canvas.height);
-//     console.log("render background");
-
-    // // Pan background
-    // sky.x -= sky.speed;
-    // backdrop.x -= backdrop.speed;
-    // backdrop2.x -= backdrop2.speed;
-
-    // // draw images side by side to loop
-    // ctx.drawImage(assetLoader.imgs.sky, sky.x, sky.y);
-    // ctx.drawImage(assetLoader.imgs.sky, sky.x + canvas.width, sky.y);
-
-    // ctx.drawImage(assetLoader.imgs.backdrop, backdrop.x, backdrop.y);
-    // ctx.drawImage(assetLoader.imgs.backdrop, backdrop.x + canvas.width, backdrop.y);
-
-    // ctx.drawImage(assetLoader.imgs.backdrop2, backdrop2.x, backdrop2.y);
-    // ctx.drawImage(assetLoader.imgs.backdrop2, backdrop2.x + canvas.width, backdrop2.y);
-
-    // // If the image scrolled off the screen, reset
-    // if (sky.x + assetLoader.imgs.sky.width <= 0)
-    //   sky.x = 0;
-    // if (backdrop.x + assetLoader.imgs.backdrop.width <= 0)
-    //   backdrop.x = 0;
-    // if (backdrop2.x + assetLoader.imgs.backdrop2.width <= 0)
-    //   backdrop2.x = 0;
-// }
-
-// BackgroundClass.prototype.getDrawable = function (context) {
-//     return assetLoader.imgs.bg;
-// }
-
-/**
- * Update all water position and draw.
- */
-function updateWater() {
-  // animate water
-  for (var i = 0; i < water.length; i++) {
-    water[i].update();
-    water[i].draw();
-  }
-
-  // remove water that has gone off screen
-  if (water[0] && water[0].x < -platformWidth) {
-    var w = water.splice(0, 1)[0];
-    w.x = water[water.length-1].x + platformWidth;
-    water.push(w);
-  }
-}
-
-/**
- * Update all environment position and draw.
- */
-function updateEnvironment() {
-  // animate environment
-  for (var i = 0; i < environment.length; i++) {
-    environment[i].update();
-    environment[i].draw();
-  }
-
-  // remove environment that have gone off screen
-  if (environment[0] && environment[0].x < -platformWidth) {
-    environment.splice(0, 1);
-  }
 }

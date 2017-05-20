@@ -17,11 +17,7 @@
 
     var canUseLocalStorage = 'localStorage' in window && window.localStorage !== null;
 
-
-    /** 游戏舞台 **/
-    var GameStage = function (props) {
-        // props.width = "100%";
-        // props.height = "100%";
+    function resizeStage() {
         var canvasWidth = $("#canvas").width();
         var canvasHeight = $("#canvas").height();
 
@@ -37,6 +33,25 @@
         globalConf.height = height;
         globalConf.update();
 
+        if (window.stage
+                && canvasWidth != globalConf.canvasWidth
+                && canvasHeight != globalConf.canvasHeight) {
+            stage.width = width;
+            stage.height = height;
+            // alert(window.orientation);
+        }
+
+        return {"width": width, "height": height};
+    }
+
+    /** 游戏舞台 **/
+    var GameStage = function (props) {
+        // props.width = "100%";
+        // props.height = "100%";
+
+        var rect = resizeStage();
+        var width = rect.width;
+        var height = rect.height;
         console.log(width, height);
 
         props.width = width;
@@ -56,8 +71,8 @@
         this.score = 0;
     }
 
-    GameStage.prototype.update = function () {
-
+    GameStage.prototype.update = function (timeInfo) {
+        return true;
     }
 
     Q.inherit(GameStage, Q.Stage);
@@ -194,21 +209,15 @@
     function startGame() {
         var background = new BackgroundClass();
         var player = new PlayerClass();
+        var textBoard = new TextBoard();
 
         stage.removeAllChildren();
         stage.addChild(background);
         stage.addChild(player);
+        stage.addChild(textBoard);
 
         stage.background = background;
         stage.player = player;
-
-        var scoreText = new Q.Text({x: globalConf.width - 80, y: 10});
-
-        scoreText.update = function (timeInfo) {
-            this.text = "得分:" + parseInt(stage.score / 30);
-            return true;
-        }
-        stage.addChild(scoreText);
 
         quark_timer.addListener(stage);   // 舞台刷新
         quark_timer.addListener(Q.Tween); // 动画
@@ -283,6 +292,13 @@
     });
 
     $(function () {
+        // 适配移动端旋转
+        // 事件监听无效
+        // $(document).on("orientationchange", resizeStage);
+        // $(document).on("resize", resizeStage);
+        // 只能定时检测了
+        // TODO 所有元素都要重绘，先hold住
+        // setInterval(resizeStage, 1000);
         gameInit();
     })
 
