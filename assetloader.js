@@ -10,6 +10,7 @@ var assetLoader = (function() {
         'backdrop': 'imgs/backdrop.png',
         'backdrop2': 'imgs/backdrop_ground.png',
         'grass': 'imgs/grass.png',
+        'space_grass': 'imgs/space_grass.png',
         // 'avatar_normal' : 'imgs/normal_walk.png',
         'avatar_normal': 'imgs/actor_nzj.png',
         'water': 'imgs/water.png',
@@ -24,6 +25,7 @@ var assetLoader = (function() {
         'box': 'imgs/boxCoin.png',
         'slime': 'imgs/slime.png',
         'bullet': 'imgs/bullet.png',
+        'enemy_1': 'imgs/enemy_1.png',
     };
 
   // sounds dictionary
@@ -31,7 +33,8 @@ var assetLoader = (function() {
     'bg'            : 'sounds/bg.mp3',
     'jump'          : 'sounds/jump.mp3',
     'gameOver'      : 'sounds/gameOver.mp3',
-      'bullet_attack': 'sounds/bullet_attack.wav'
+      'bullet_attack': 'sounds/bullet_attack.wav',
+      'bom_attack': 'sounds/bom_attack.wav',
   };
 
   var assetsLoaded = 0;                                // how many assets have been loaded

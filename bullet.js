@@ -58,3 +58,33 @@ Bullet.attack = function (fromX, fromY, targetX, targetY) {
     window.stage.addChild(bullet);
     bullet.attack(targetX, targetY);
 }
+
+function FogBullet(cx, cy) {
+    var props = {};
+    props.image = assetLoader.imgs.bullet
+    FogBullet.superClass.constructor.call(this, props);
+    this.width = 64;
+    this.height = 64;
+    this.x = cx - this.width;
+    this.y = cy - this.height;
+
+    this.addFrame([
+        {rect: [0, 0, 64, 64]}
+    ]);
+
+    var self = this;
+    this.alpha = 1;
+    var tween = new Q.Tween(this, {width: this.width * 3, height: this.height * 3,
+                x: this.x - this.width * 1.5,
+                y: this.y - this.height * 1.5,
+            alpha:0},
+            {time: 500, onComplete: function () {
+        self.onComplete();
+    }});
+    tween.start();
+}
+Q.inherit(FogBullet, Q.MovieClip);
+
+FogBullet.prototype.onComplete = function () {
+    this.parent.removeChild(this);
+}

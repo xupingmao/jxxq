@@ -175,8 +175,8 @@ function BackgroundClass(props) {
     // 道路
 
     this.roadList = [];
-    this.addRoad(new RoadClass(assetLoader.imgs.grass,
-        20, 0, globalConf.height - globalConf.grassHeight));
+    this.addRoad(new RoadClass(assetLoader.imgs.space_grass,
+        2, 0, globalConf.height - globalConf.grassHeight));
 }
 
 // 必须先继承，然后再实现其他方法
@@ -199,7 +199,13 @@ BackgroundClass.prototype.addRandRoad = function () {
     var x = globalConf.width;
     var maxY = globalConf.height - globalConf.grassHeight;
     var randHeight = rand(maxY - globalConf.playerHeight, maxY);
-    this.addRoad(new RoadClass(assetLoader.imgs.grass, rand(10,20), x, randHeight));
+    var randRoad = new RoadClass(assetLoader.imgs.space_grass, rand(1,3), x, randHeight);
+    this.addRoad(randRoad);
+
+    if (Math.random() >= 0.5) {
+        // 随机出现一个enemy
+        this.addChild(new EnemyClass(assetLoader.imgs.enemy_1, randRoad.x + randRoad.width/2, randRoad.y));
+    }
 }
 
 BackgroundClass.prototype.update = function (timeInfo) {
