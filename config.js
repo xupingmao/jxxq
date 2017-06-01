@@ -31,7 +31,7 @@ globalConf.roadBoxHeight = 16;
 globalConf.bulletWidth = 16;
 globalConf.bulletHeight = 16;
 
-globalConf.grassSpeed = 8;
+globalConf.grassSpeed = 24;
 globalConf.maxStepWidth = globalConf.grassWidth * 3; // 最大跳跃距离
 
 

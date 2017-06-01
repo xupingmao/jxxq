@@ -1,3 +1,11 @@
+/**
+ * 扩展方法
+ */
+
+Array.prototype.remove = Array.prototype.remove || function (object) {
+    var index = this.indexOf(object);
+    this.splice(index, 1);
+}
 
 /**
  * Fps 计数器

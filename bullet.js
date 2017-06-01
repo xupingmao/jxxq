@@ -18,6 +18,7 @@ var Bullet = function(props){
     this.width = width;
     this.height = height;
 
+    this.attackTween = undefined;
     this.init();
 }
 
@@ -42,10 +43,27 @@ Bullet.prototype.attack = function (targetX, targetY) {
     }});
     tween.start();
     // Q.trace("bullet attack", target);
+    this.attackTween = tween;
 }
 
 Bullet.prototype.isEnd = function () {
     return this.completed;
+}
+
+Bullet.prototype.explode = function (target) {
+    this.attackTween.stop();
+    this.alpha = 1;
+    var self = this;
+    var tween = new Q.Tween(this, {width: this.width * 3, height: this.height * 3,
+            x: this.x - this.width * 1.5,
+            y: this.y - this.height * 1.5,
+            alpha:0},
+        {time: 100, onComplete: function () {
+            stage.background.removeEnemy(target);
+            self.parent.removeChild(self)
+        }});
+    tween.start();
+    assetLoader.sounds.bom_attack.play();
 }
 
 Bullet.prototype.onComplete = function () {
@@ -57,6 +75,18 @@ Bullet.attack = function (fromX, fromY, targetX, targetY) {
     var bullet = new Bullet({cx: fromX, cy: fromY});
     window.stage.addChild(bullet);
     bullet.attack(targetX, targetY);
+}
+
+Bullet.prototype.update = function (timeInfo) {
+    var enemies = stage.background.enemyList;
+    var self = this;
+    enemies.forEach(function (enemy, index, p3) {
+        if (Q.hitTestObject(self, enemy)) {
+            self.explode(enemy);
+            return false;
+        }
+    })
+    return true;
 }
 
 function FogBullet(cx, cy) {

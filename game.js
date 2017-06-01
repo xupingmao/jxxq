@@ -77,6 +77,19 @@
 
     Q.inherit(GameStage, Q.Stage);
 
+    function setJumpState() {
+        // if (KEY_STATUS["space"] == true) {
+        //     KEY_STATUS["secondSpace"] = true;
+        //     setTimeout(function () {
+        //         KEY_STATUS["secondSpace"] = false;
+        //     }, 200);
+        // }
+        KEY_STATUS["space"] = true;
+        setTimeout(function () {
+            KEY_STATUS["space"] = false;
+        }, 50);
+    }
+
     function gameInit() {
         frames = 0;
         canvas = document.getElementById('canvas');
@@ -124,10 +137,8 @@
 
             if (x < width / 3) {
                 // 左侧1/3
-                KEY_STATUS["space"] = true;
-                setTimeout(function () {
-                    KEY_STATUS["space"] = false;
-                }, 200);
+                // 第二次跳跃
+                setJumpState();
             } else {
                 var _x = x / width * globalConf.width;
                 var _y = y / height * globalConf.height;
@@ -159,6 +170,7 @@
     };
     var KEY_STATUS = {
         "space": false,
+        "secondSpace": false,
         "fireBullet": undefined
     };
     window.KEY_STATUS = KEY_STATUS;
@@ -168,18 +180,14 @@
         }
     }
     document.onkeydown = function (e) {
-        var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
-        if (KEY_CODES[keyCode]) {
-            e.preventDefault();
-            KEY_STATUS[KEY_CODES[keyCode]] = true;
-        }
+        setJumpState();
     };
     document.onkeyup = function (e) {
         var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
-        if (KEY_CODES[keyCode]) {
-            e.preventDefault();
-            KEY_STATUS[KEY_CODES[keyCode]] = false;
-        }
+        // if (KEY_CODES[keyCode]) {
+        //     e.preventDefault();
+        //     KEY_STATUS[KEY_CODES[keyCode]] = false;
+        // }
     };
 
     /**

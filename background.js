@@ -164,8 +164,8 @@ function BackgroundClass(props) {
     this.addChild(this.sky_2);
     this.addChild(this.backdrop);
     this.addChild(this.backdrop_2);
-    this.addChild(this.backdrop2);
-    this.addChild(this.backdrop2_2);
+    // this.addChild(this.backdrop2);
+    // this.addChild(this.backdrop2_2);
 
     this.addChild(new WaterClass(assetLoader.imgs.water,
         30, 0, globalConf.height - globalConf.grassHeight));
@@ -177,6 +177,8 @@ function BackgroundClass(props) {
     this.roadList = [];
     this.addRoad(new RoadClass(assetLoader.imgs.space_grass,
         2, 0, globalConf.height - globalConf.grassHeight));
+    // 敌人
+    this.enemyList = [];
 }
 
 // 必须先继承，然后再实现其他方法
@@ -204,8 +206,18 @@ BackgroundClass.prototype.addRandRoad = function () {
 
     if (Math.random() >= 0.5) {
         // 随机出现一个enemy
-        this.addChild(new EnemyClass(assetLoader.imgs.enemy_1, randRoad.x + randRoad.width/2, randRoad.y));
+        this.addEnemy(new EnemyClass(assetLoader.imgs.enemy_1, randRoad.x + randRoad.width/2, randRoad.y));
     }
+}
+
+BackgroundClass.prototype.addEnemy = function (enemy) {
+    this.enemyList.push(enemy);
+    this.addChild(enemy);
+}
+
+BackgroundClass.prototype.removeEnemy = function (enemy) {
+    this.enemyList.remove(enemy);
+    this.removeChild(enemy);
 }
 
 BackgroundClass.prototype.update = function (timeInfo) {

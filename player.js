@@ -34,6 +34,7 @@ function PlayerClass() {
     this.jumpDy = 5;
 
     this.isJumping  = false;
+    this.isSecondJumping = false;
     this.isFalling  = false;
     this.gravity    = 5;
     this.roadHeight = globalConf.roadHeight;
@@ -58,6 +59,13 @@ PlayerClass.prototype.update = function (timeInfo) {
         // v  = 1/2 * a * t
         // t  = 15  半秒左右
         assetLoader.sounds.jump.play();
+        KEY_STATUS.space = false;
+    } else if (KEY_STATUS.space && player.isJumping && !player.isSecondJumping) {
+        // 第二次跳跃
+        // alert("Yes!");
+        this.dy = -50;
+        assetLoader.sounds.jump.play();
+        player.isSecondJumping = true;
     }
 
     // jump higher if the space bar is continually pressed
@@ -92,6 +100,7 @@ PlayerClass.prototype.update = function (timeInfo) {
         this.dy = 0;
         this.y  = groundY - this.height;
         this.isJumping = false;
+        this.isSecondJumping = false;
     }
 
     // change animation if falling
