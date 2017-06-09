@@ -212,16 +212,31 @@
     window.mainMenu = mainMenu;
 
     /**
+     * 全屏
+     * @param element
+     */
+    function fullScreen(element) {
+        if(element.requestFullScreen) {
+            element.requestFullScreen();
+        } else if(element.webkitRequestFullScreen ) {
+            element.webkitRequestFullScreen();
+        } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        }
+    }
+
+    /**
      * Start the game - reset all variables and entities, spawn ground and water.
      */
     function startGame() {
+        fullScreen(document.getElementById("canvas"));
         var background = new BackgroundClass();
         var player = new PlayerClass();
         var textBoard = new TextBoard();
 
         stage.removeAllChildren();
         stage.addChild(background);
-        stage.addChild(player);
+        background.addPlayer(player);
         stage.addChild(textBoard);
 
         stage.background = background;

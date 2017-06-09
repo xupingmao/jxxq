@@ -32,3 +32,15 @@ EnemyClass.prototype.update = function (timeInfo) {
     }
     return true;
 }
+
+/**
+ *
+ * @param randRoad 道路的位置
+ */
+function randomEnemy(randRoad) {
+    if (Math.random() < 0.5) {
+        return new EnemyClass(assetLoader.imgs.enemy_1, randRoad.x + randRoad.width/2, randRoad.y)
+    } else {
+        return new EnemyClass(assetLoader.imgs.enemy_2, randRoad.x + randRoad.width/2, randRoad.y - globalConf.height/2);
+    }
+}

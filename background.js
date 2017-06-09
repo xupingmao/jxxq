@@ -17,12 +17,42 @@ function newBitmap (img, width, height) {
 function BackgroundImage(img, x, y, width, height, speed) {
     var props    = {};
     props.image  = img;
-    
+    var option;
     // props.rectX  = x;
     // props.rectY  = y;
-    props.speed  = speed;
-
     BackgroundImage.superClass.constructor.call(this, props);
+
+    if (typeof x == "object") {
+        option = x;
+        speed = option.speed;
+        var position = option.position;
+
+        x = 0;
+        y = 0;
+        width = img.width;
+        height = img.height;
+
+        if (option.alpha) {
+            this.alpha = option.alpha;
+        }
+
+        if (option.x) {
+            x = option.x;
+        }
+
+        if (option.y) {
+            y = option.y;
+        }
+
+        if (option.height && !option.width) {
+            height = option.height;
+            width = height * img.width / img.height;
+        }
+
+        if (position == "bottom") {
+            y = globalConf.height - height;
+        }
+    }
 
     this.rectX = 0;
     this.rectY = 0;
@@ -59,7 +89,6 @@ function ScrollableClass() {
 Q.inherit(ScrollableClass, Q.DisplayObjectContainer);
 
 ScrollableClass.prototype.update = function (timeInfo) {
-
     return true;
 }
 
@@ -91,7 +120,7 @@ Q.inherit(RoadClass, Q.DisplayObjectContainer);
 RoadClass.prototype.update = function (timeInfo) {
     this.x -= this.speed;
     if (this.x + this.width < 0) {
-        this.parent.removeRoad(this);
+        this.background.removeRoad(this);
     }
     return true;
 }
@@ -109,6 +138,13 @@ WaterClass.prototype.update = function (timeInfo) {
     }
     return true;
 }
+
+function ActorLayerClass() {
+    ActorLayerClass.superClass.constructor.call(this, {});
+    this.x = 0;
+    this.y = 0;
+}
+Q.inherit(ActorLayerClass, Q.DisplayObjectContainer);
 
 // DisplayObject._render会进行转换
 // BackgroundImage.prototype.render = function (context) {
@@ -153,9 +189,13 @@ function BackgroundClass(props) {
     this.backdrop2 = new BackgroundImage(assetLoader.imgs.backdrop2,
         0, 0, globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
 
-    this.backdrop2_2 = new BackgroundImage(assetLoader.imgs.backdrop2,
-        globalConf.backdrop2Width, 0,
-        globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
+    // 前景图
+    this.foreground_1 = new BackgroundImage(assetLoader.imgs.foreground_1, { speed: 0.5, position:"bottom", alpha:0.8, height:200});
+    this.foreground_2 = new BackgroundImage(assetLoader.imgs.foreground_2, {x:globalConf.width/2,  speed:0.5, position:"bottom", alpha:0.8, height:200});
+    this.foreground_3 = new BackgroundImage(assetLoader.imgs.foreground_3, {x:globalConf.width,  speed:0.5, position:"bottom", alpha:0.8, height:200});
+
+    this.actorLayer = new ActorLayerClass();
+
 
     // 最远景
     this.addChild(this.bg);
@@ -164,8 +204,7 @@ function BackgroundClass(props) {
     this.addChild(this.sky_2);
     this.addChild(this.backdrop);
     this.addChild(this.backdrop_2);
-    // this.addChild(this.backdrop2);
-    // this.addChild(this.backdrop2_2);
+    this.addChild(this.actorLayer);
 
     this.addChild(new WaterClass(assetLoader.imgs.water,
         30, 0, globalConf.height - globalConf.grassHeight));
@@ -179,19 +218,24 @@ function BackgroundClass(props) {
         2, 0, globalConf.height - globalConf.grassHeight));
     // 敌人
     this.enemyList = [];
+
+    this.addChild(this.foreground_1);
+    this.addChild(this.foreground_2);
+    this.addChild(this.foreground_3);
 }
 
 // 必须先继承，然后再实现其他方法
 Q.inherit(BackgroundClass, Q.DisplayObjectContainer);
 
 BackgroundClass.prototype.addRoad = function (road) {
+    road.background = this;
     this.roadList.push(road);
-    this.addChild(road);
+    this.actorLayer.addChild(road);
     console.log("add road " + road);
 }
 
 BackgroundClass.prototype.removeRoad = function (road) {
-    this.removeChild(road);
+    this.actorLayer.removeChild(road);
     var index = this.roadList.indexOf(road);
     this.roadList.splice(index, 1);
     console.log(road + " removed");
@@ -204,20 +248,25 @@ BackgroundClass.prototype.addRandRoad = function () {
     var randRoad = new RoadClass(assetLoader.imgs.space_grass, rand(1,3), x, randHeight);
     this.addRoad(randRoad);
 
-    if (Math.random() >= 0.5) {
+    // if (Math.random() >= 0.5) {
         // 随机出现一个enemy
-        this.addEnemy(new EnemyClass(assetLoader.imgs.enemy_1, randRoad.x + randRoad.width/2, randRoad.y));
-    }
+        this.addEnemy(randomEnemy(randRoad));
+    // }
+}
+
+BackgroundClass.prototype.addPlayer = function (player) {
+    this.player = player;
+    this.actorLayer.addChild(player);
 }
 
 BackgroundClass.prototype.addEnemy = function (enemy) {
     this.enemyList.push(enemy);
-    this.addChild(enemy);
+    this.actorLayer.addChild(enemy);
 }
 
 BackgroundClass.prototype.removeEnemy = function (enemy) {
     this.enemyList.remove(enemy);
-    this.removeChild(enemy);
+    this.actorLayer.removeChild(enemy);
 }
 
 BackgroundClass.prototype.update = function (timeInfo) {

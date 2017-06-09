@@ -25,7 +25,7 @@ function PlayerClass() {
 
     this.width  = globalConf.playerWidth;
     this.height = globalConf.playerHeight;
-    this.x = 100;
+    this.x = globalConf.width / 4;
     this.y = globalConf.height - this.height - globalConf.roadHeight;
     this.originY = this.y;
 
@@ -45,6 +45,7 @@ function PlayerClass() {
 Q.inherit(PlayerClass, Q.Bitmap);
 
 PlayerClass.prototype.update = function (timeInfo) {
+    // console.log(timeInfo);
     var player = this;
     var jumpCounter = this.jumpCounter;
 
@@ -54,7 +55,7 @@ PlayerClass.prototype.update = function (timeInfo) {
     if (KEY_STATUS.space && !player.isJumping) {
         this.isJumping   = true;
         // this.jumpCounter = 12;
-        this.dy          = -40;
+        this.dy          = -30;
         // vt = 1/2 * a * t ^ 2
         // v  = 1/2 * a * t
         // t  = 15  半秒左右
@@ -63,7 +64,7 @@ PlayerClass.prototype.update = function (timeInfo) {
     } else if (KEY_STATUS.space && player.isJumping && !player.isSecondJumping) {
         // 第二次跳跃
         // alert("Yes!");
-        this.dy = -50;
+        this.dy = -40;
         assetLoader.sounds.jump.play();
         player.isSecondJumping = true;
     }

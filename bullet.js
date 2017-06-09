@@ -60,7 +60,7 @@ Bullet.prototype.explode = function (target) {
             alpha:0},
         {time: 100, onComplete: function () {
             stage.background.removeEnemy(target);
-            self.parent.removeChild(self)
+            if (self.parent) self.parent.removeChild(self)
         }});
     tween.start();
     assetLoader.sounds.bom_attack.play();
@@ -78,10 +78,13 @@ Bullet.attack = function (fromX, fromY, targetX, targetY) {
 }
 
 Bullet.prototype.update = function (timeInfo) {
+    // TODO 优化检查次数
     var enemies = stage.background.enemyList;
     var self = this;
     enemies.forEach(function (enemy, index, p3) {
-        if (Q.hitTestObject(self, enemy)) {
+        // FIXME 飞行过快导致碰撞检测不准
+        // 考虑使用距离检测
+        if (Q.hitTestObject(enemy, self)) {
             self.explode(enemy);
             return false;
         }
