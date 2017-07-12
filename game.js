@@ -229,7 +229,7 @@
      * Start the game - reset all variables and entities, spawn ground and water.
      */
     function startGame() {
-        fullScreen(document.getElementById("canvas"));
+        // fullScreen(document.getElementById("canvas"));
         var background = new BackgroundClass();
         var player = new PlayerClass();
         var textBoard = new TextBoard();

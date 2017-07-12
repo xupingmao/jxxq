@@ -27,6 +27,8 @@ var assetLoader = (function() {
         'bullet': 'imgs/bullet.png',
         'enemy_1': 'imgs/enemy_1.png',
         'enemy_2': 'imgs/enemy_2.png',
+        'enemy_3': 'imgs/enemy_3.png',
+        'enemy_4': 'imgs/enemy_4.png',
         'foreground_1': 'imgs/foreground_1.png',
         'foreground_2': 'imgs/foreground_2.png',
         'foreground_3': 'imgs/foreground_3.png',

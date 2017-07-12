@@ -59,7 +59,8 @@ Bullet.prototype.explode = function (target) {
             y: this.y - this.height * 1.5,
             alpha:0},
         {time: 100, onComplete: function () {
-            stage.background.removeEnemy(target);
+            // stage.background.removeEnemy(target);
+            // target.attacked();
             if (self.parent) self.parent.removeChild(self)
         }});
     tween.start();
@@ -86,6 +87,7 @@ Bullet.prototype.update = function (timeInfo) {
         // 考虑使用距离检测
         if (Q.hitTestObject(enemy, self)) {
             self.explode(enemy);
+            enemy.attacked(self);
             return false;
         }
     })
