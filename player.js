@@ -135,8 +135,7 @@ PlayerClass.prototype.fireBullet = function (targetX, targetY) {
 
     var width = targetX - cx;
     var height = targetY - cy;
-    bullet.attack(cx + globalConf.width,
-        cy + globalConf.width * height / width);
+    bullet.attack(targetX, targetY);
     console.log(targetX, targetY);
     stage.addChild(bullet);
 

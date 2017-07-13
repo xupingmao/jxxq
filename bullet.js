@@ -35,10 +35,24 @@ Bullet.prototype.init = function () {
 Bullet.prototype.attack = function (targetX, targetY) {
     var self = this;
 
-    var x1 = targetX - this.width / 2;
-    var y1 = targetY - this.height / 2;
+    var x1, y1;
+
+    var cx = this.x - this.width/2;
+    var cy = this.y - this.height/2;
+
+    var distance = 1000;
+
+    if (targetX == cx) {
+        x1 = cx;
+        y1 = cy + distance;
+    } else {
+        // tan(reg) = (targetY-cy) / (targetX-cx)
+        var reg = Math.atan((targetY-cy)/(targetX-cx));
+        x1 = cx + distance * Math.cos(reg);
+        y1 = cy + distance * Math.sin(reg);
+    }
     // console.log("Bullet.attack", x1, y1);
-    var tween = new Q.Tween(this, {x: x1, y: y1}, {time: 500, onComplete: function () {
+    var tween = new Q.Tween(this, {x: x1, y: y1}, {time: distance/2, onComplete: function () {
         self.onComplete();
     }});
     tween.start();

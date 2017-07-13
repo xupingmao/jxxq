@@ -77,3 +77,7 @@ function checkInXRange(rangeObj, target) {
     var x = target.x;
     return x >= rangeObj.x && x <= (rangeObj.x + rangeObj.width);
 }
+
+function distanceOf(x, y, x1, y1) {
+  return Math.sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y));
+}
