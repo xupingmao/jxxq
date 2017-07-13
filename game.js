@@ -21,11 +21,11 @@
         var canvasWidth = $("#canvas").width();
         var canvasHeight = $("#canvas").height();
 
-        var width = Math.min(globalConf.width, canvasWidth);
+        var height = Math.min(globalConf.height, canvasHeight);
         // var ratio = 480 / 640;
         var ratio = canvasHeight / canvasWidth;
-        var height = width * ratio;
-
+        var width = height / ratio;
+        
         var displayWidth = width;
         var displayHeight = height;
 

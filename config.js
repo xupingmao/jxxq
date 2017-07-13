@@ -40,11 +40,14 @@ globalConf.update = function () {
     // var scaleX = globalConf.width / 640;
     // var scaleY = globalConf.height / 480;
 
-    var scaleX = globalConf.width / 3840;
-    var scaleY = scaleX;
+    var scaleY = globalConf.height / 1300 ;
+    var scaleX = scaleY;
 
     globalConf.scaleX = scaleX;
     globalConf.scaleY = scaleY;
+
+    globalConf.height = parseInt(globalConf.height);
+    globalConf.width  = parseInt(globalConf.width);
 
     globalConf.roadHeight = globalConf.height / 4;
     globalConf.bgWidth = globalConf.height  / 1300 * 3840;
@@ -53,8 +56,8 @@ globalConf.update = function () {
     // 64 * 32
     // globalConf.playerHeight = assetLoader.imgs.avatar_normal.width / 4  * scaleX;
     // globalConf.playerWidth = assetLoader.imgs.avatar_normal.height / 4  * scaleY;
-    globalConf.playerHeight = 64;
-    globalConf.playerWidth = 32;
+    globalConf.playerHeight = 256 * scaleY;
+    globalConf.playerWidth = 128 * scaleX;
 
     // 1222 x 287
     globalConf.grassWidth = 1222 * scaleX;
@@ -66,8 +69,8 @@ globalConf.update = function () {
     globalConf.backdrop2Width = 800 * scaleX * 2;
     globalConf.backdrop2Height = 480 * scaleY * 2;
 
-    globalConf.skyWidth = 800 * scaleX;
-    globalConf.skyHeight = 480 * scaleY;
+    globalConf.skyWidth = 800 * scaleX * 2;
+    globalConf.skyHeight = 480 * scaleY * 2;
 
     globalConf.canvasWidth = $("#canvas").width();
     globalConf.canvasHeight = $("#canvas").height();

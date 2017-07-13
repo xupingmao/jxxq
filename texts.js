@@ -23,7 +23,7 @@ Q.inherit(TextBoard, Q.DisplayObjectContainer);
 TextBoard.prototype.update = function (timeInfo) {
     this.scoreText.text = "得分:" + parseInt(stage.score / 30);
     this.stageText.text = "stage => width:" + globalConf.width + ",height:" + globalConf.height.toFixed(2);
-    this.backdropText.text = "backdrop => width:" + globalConf.backdropWidth + ",height:" + globalConf.backdropHeight.toFixed(2);
-    this.grassText.text = "text => width:" + globalConf.grassWidth + ",height:" + globalConf.grassHeight.toFixed(2);
+    this.backdropText.text = "backdrop => width:" + globalConf.backdropWidth.toFixed(2) + ",height:" + globalConf.backdropHeight.toFixed(2);
+    this.grassText.text = "text => width:" + globalConf.grassWidth.toFixed(2) + ",height:" + globalConf.grassHeight.toFixed(2);
     return true;
 }

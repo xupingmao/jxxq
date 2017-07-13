@@ -92,6 +92,6 @@ function randomEnemy(randRoad) {
     if (Math.random() < 0.5) {
         return new EnemyClass(assetLoader.imgs.enemy_4, randRoad.x + randRoad.width/2, randRoad.y, 4, 4);
     } else {
-        return new EnemyClass(assetLoader.imgs.enemy_3, randRoad.x + randRoad.width/2, randRoad.y - globalConf.height/2, 4, 4);
+        return new EnemyClass(assetLoader.imgs.enemy_3, randRoad.x + randRoad.width/2, randRoad.y - globalConf.height/4, 4, 4);
     }
 }
