@@ -149,6 +149,9 @@
         stage.on("touchend", touchEventCallback);
         stage.on("mouseup", touchEventCallback);
 
+        // 调试矩形区域
+        Q.toggleDebugRect(stage);
+
         // set the sound preference
         if (canUseLocalStorage) {
             playSound = (localStorage.getItem('kandi.playSound') !== "false")

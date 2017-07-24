@@ -3,9 +3,10 @@
  *
  **/
 
-function EnemyClass(image, x, bottomY, xCount, yCount) {
+function EnemyClass(image, x, bottomY, xCount, yCount, startY) {
     var props = {};
     props.image = image;
+    startY = startY || 0;
 
     EnemyClass.superClass.constructor.call(this, props);
 
@@ -31,11 +32,10 @@ function EnemyClass(image, x, bottomY, xCount, yCount) {
 
     for (var i = 0; i < xCount; i++) {
         var x = rectWidth * i;
-        var y = 0;
+        var y = startY;
         var rect = [x, y, rectWidth, rectHeight];
         this.addFrame({rect: rect, interval: 100});
     }
-
 }
 
 Q.inherit(EnemyClass, Q.MovieClip);
@@ -53,6 +53,44 @@ EnemyClass.prototype.update = function (timeInfo) {
         this.parent.removeChild(this);
     }
     return true;
+}
+
+var towerUpdate = function (timeInfo) {
+    this.x -= globalConf.grassSpeed;
+    console.log("tower update");
+    if (this.currentFrame == 3) {
+        this.stop();
+    }
+    if (this.x + this.width <= 0) {
+        this.parent.removeChild(this);
+    }
+    return true;
+}
+
+function createTower(randRoad) {
+    var tower = new EnemyClass(assetLoader.imgs.enemy_5, randRoad.x + randRoad.width/2, randRoad.y, 4, 1);
+
+    tower.update = towerUpdate; 
+    tower.width  = globalConf.middleUnitWidth;
+    tower.height = globalConf.middleUnitHeight;
+
+    console.log("Add tower", tower);
+    return tower;
+}
+
+function createBunker(randRoad) {
+    var bunker = new EnemyClass(assetLoader.imgs.enemy_4, randRoad.x + randRoad.width/2, randRoad.y, 4, 4);
+    bunker.width = globalConf.enemyWidth;
+    bunker.height = globalConf.enemyHeight;
+    return bunker;
+}
+
+function createPlane(randRoad) {
+    var plane = new EnemyClass(assetLoader.imgs.enemy_3, randRoad.x + randRoad.width/2, randRoad.y - globalConf.height/4, 4, 4);
+
+    plane.width = globalConf.enemyWidth;
+    plane.height = globalConf.enemyHeight;
+    return plane;
 }
 
 /**
@@ -89,9 +127,12 @@ EnemyClass.prototype.attacked = function (attackObject) {
  * @param randRoad 道路的位置
  */
 function randomEnemy(randRoad) {
-    if (Math.random() < 0.5) {
-        return new EnemyClass(assetLoader.imgs.enemy_4, randRoad.x + randRoad.width/2, randRoad.y, 4, 4);
+    var value = Math.random();
+    if (value < 0.3) {
+        return createBunker(randRoad);
+    } else if (value >= 0.3 && value <= 0.7) {
+        return createTower(randRoad);
     } else {
-        return new EnemyClass(assetLoader.imgs.enemy_3, randRoad.x + randRoad.width/2, randRoad.y - globalConf.height/4, 4, 4);
+        return createPlane(randRoad);
     }
 }

@@ -7,10 +7,10 @@ function TextBoard() {
     var props = {};
     TextBoard.superClass.constructor.call(this, props);
 
-    this.scoreText = new Q.Text({x: globalConf.width - 80, y: 10});
-    this.stageText = new Q.Text({x: globalConf.width - 200, y:30});
-    this.backdropText = new Q.Text({x: globalConf.width - 200, y: 50});
-    this.grassText = new Q.Text({x: globalConf.width - 200, y: 70});
+    this.scoreText = new Q.Text({x: globalConf.width - 80, y: 10, color:"#fff"});
+    this.stageText = new Q.Text({x: globalConf.width - 200, y:30, color:"#fff"});
+    this.backdropText = new Q.Text({x: globalConf.width - 200, y: 50, color:"#fff"});
+    this.grassText = new Q.Text({x: globalConf.width - 200, y: 70, color:"#fff"});
     this.addChild(this.scoreText);
     this.addChild(this.stageText);
     this.addChild(this.backdropText);

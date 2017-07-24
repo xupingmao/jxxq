@@ -34,14 +34,22 @@ globalConf.bulletHeight = 16;
 globalConf.grassSpeed = 12;
 globalConf.maxStepWidth = globalConf.grassWidth * 3; // 最大跳跃距离
 
-
 globalConf.update = function () {
+    // 实际大小 1920 * 1080
     // scale = 显示大小 / 实际大小
     // var scaleX = globalConf.width / 640;
     // var scaleY = globalConf.height / 480;
 
-    var scaleY = globalConf.height / 1300 ;
+    var scaleY = globalConf.height / 1080 ;
     var scaleX = scaleY;
+
+    globalConf.largeUnitWidth = scaleX * 256;
+    globalConf.largeUnitHeight = scaleY * 256;
+    globalConf.middleUnitWidth = scaleX * 128;
+    globalConf.middleUnitHeight = scaleY * 128;
+
+    globalConf.enemyWidth = 600 * scaleX;
+    globalConf.enemyHeight = 460 * scaleY;
 
     globalConf.scaleX = scaleX;
     globalConf.scaleY = scaleY;
@@ -56,8 +64,8 @@ globalConf.update = function () {
     // 64 * 32
     // globalConf.playerHeight = assetLoader.imgs.avatar_normal.width / 4  * scaleX;
     // globalConf.playerWidth = assetLoader.imgs.avatar_normal.height / 4  * scaleY;
-    globalConf.playerHeight = 256 * scaleY;
-    globalConf.playerWidth = 128 * scaleX;
+    globalConf.playerHeight = 205 * scaleY;
+    globalConf.playerWidth =  130 * scaleX;
 
     // 1222 x 287
     globalConf.grassWidth = 1222 * scaleX;
