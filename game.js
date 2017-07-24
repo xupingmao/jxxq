@@ -232,6 +232,23 @@
      * Start the game - reset all variables and entities, spawn ground and water.
      */
     function startGame() {
+        var orientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
+        if (orientation) {
+            // alert(orientation.type);
+            // orientation.type = "landscape-secondary";
+            // orientation.lock("landscape");
+            console.log(orientation.type);
+        }
+
+        screen.lockOrientationUniversal = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+
+        if (screen.lockOrientationUniversal && screen.lockOrientationUniversal("landscape-primary")) {
+          // orientation was locked
+        } else {
+          // orientation lock failed
+        }
+
+        gameInit();
         // fullScreen(document.getElementById("canvas"));
         var background = new BackgroundClass();
         var player = new PlayerClass();
@@ -317,7 +334,7 @@
         startGame();
     });
 
-    $(function () {
+    $(document).ready(function () {
         // 适配移动端旋转
         // 事件监听无效
         // $(document).on("orientationchange", resizeStage);
@@ -325,7 +342,10 @@
         // 只能定时检测了
         // TODO 所有元素都要重绘，先hold住
         // setInterval(resizeStage, 1000);
-        gameInit();
+        // canvas没加载完
+        // TODO 检测为横屏
+        // setTimeout(gameInit, 1000);
+        // gameInit();
     })
 
     assetLoader.downloadAll();
