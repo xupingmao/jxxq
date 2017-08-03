@@ -82,5 +82,7 @@ globalConf.update = function () {
 
     globalConf.canvasWidth = $("#canvas").width();
     globalConf.canvasHeight = $("#canvas").height();
+
+    globalConf.roadSpeed = 0.1;
 }
 

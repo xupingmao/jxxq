@@ -14,13 +14,13 @@ function newBitmap (img, width, height) {
     });
 }
 
-function BackgroundImage(img, x, y, width, height, speed) {
+function BackgroundImage0(img, x, y, width, height, speed) {
     var props    = {};
     props.image  = img;
     var option;
     // props.rectX  = x;
     // props.rectY  = y;
-    BackgroundImage.superClass.constructor.call(this, props);
+    BackgroundImage0.superClass.constructor.call(this, props);
 
     if (typeof x == "object") {
         option = x;
@@ -69,7 +69,22 @@ function BackgroundImage(img, x, y, width, height, speed) {
     // this.speed  = 0.2;
 }
 
-Q.inherit(BackgroundImage, Q.Bitmap);
+Q.inherit(BackgroundImage0, Q.Bitmap);
+
+function BackgroundImage(img, x, y, width, height, speed) {
+    var background = new BackgroundImage0(img, x, y, width, height, speed);
+
+    var props = {};
+    props.width = width;
+    props.height = height;
+    props.x = x;
+    props.y = y;
+
+    BackgroundImage.superClass.constructor.call(this, props);
+    this.addChild(background);
+}
+
+Q.inherit(BackgroundImage, Q.DisplayObjectContainer);
 
 BackgroundImage.prototype.update = function (timeInfo) {
     this.x -= this.speed;
@@ -80,7 +95,6 @@ BackgroundImage.prototype.update = function (timeInfo) {
 
     return true;
 }
-
 
 function ScrollableClass() {
     var props = {};
@@ -250,8 +264,10 @@ BackgroundClass.prototype.addRandRoad = function () {
 
     // if (Math.random() >= 0.5) {
         // 随机出现一个enemy
-        this.addEnemy(randomEnemy(randRoad));
+    this.addEnemy(randomEnemy(randRoad));
     // }
+
+    this.addChild(createRandomBox());
 }
 
 BackgroundClass.prototype.addPlayer = function (player) {

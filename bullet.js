@@ -9,7 +9,9 @@ var Bullet = function(props){
     props.x = props.cx - width / 2;
     props.y = props.cy - height / 2;
 
-    props.image = assetLoader.imgs.bullet;
+    if (!props.image) {
+        props.image = assetLoader.imgs.bullet;
+    }
 
     Bullet.superClass.constructor.call(this,props);
     this.completed = false;
@@ -19,6 +21,18 @@ var Bullet = function(props){
     this.height = height;
 
     this.attackTween = undefined;
+
+    if (props.rectWidth) {
+        this.myRectWidth = props.rectWidth;
+    } else {
+        this.myRectWidth = 64;
+    }
+    if (props.rectHeight) {
+        this.myRectHeight = props.rectHeight;
+    } else {
+        this.myRectHeight = 64;
+    }
+    
     this.init();
 }
 
@@ -27,7 +41,7 @@ Q.inherit(Bullet,Q.MovieClip);
 Bullet.prototype.init = function () {
     this.addFrame(
         [
-            {rect : [0, 0, 64, 64]},
+            {rect : [0, 0, this.myRectWidth, this.myRectHeight]},
         ]
     )
 }
@@ -110,7 +124,7 @@ Bullet.prototype.update = function (timeInfo) {
 
 function FogBullet(cx, cy) {
     var props = {};
-    props.image = assetLoader.imgs.bullet
+    props.image = assetLoader.imgs.bullet;
     FogBullet.superClass.constructor.call(this, props);
     this.width = 64;
     this.height = 64;
@@ -136,4 +150,56 @@ Q.inherit(FogBullet, Q.MovieClip);
 
 FogBullet.prototype.onComplete = function () {
     this.parent.removeChild(this);
+}
+
+/**
+ * 镭射子弹
+ */
+var LaserBullet = function (props) {
+    var width = globalConf.bulletWidth;
+    var height = globalConf.bulletHeight;
+    props.x = props.cx - width / 2;
+    props.y = props.cy - height / 2;
+
+    props.image = assetLoader.imgs.bullet_1;
+
+    LaserBullet.superClass.constructor.call(this,props);
+    this.completed = false;
+    this.target = null;
+
+    this.width = width * 2;
+    this.height = height * 2;
+
+    this.attackTween = undefined;
+    this.init();
+}
+
+Q.inherit(LaserBullet, Bullet);
+
+function createBullet(cx, cy, targetX, targetY) {
+    var rand = Math.random();
+    if (rand <= 0.5) {
+        var rotation = 0;
+        if (targetX && targetY) {
+            if (targetX == cx) {
+                rotation = 0;
+            } else if (targetY == cy) {
+                rotation = 90;
+            } else {
+                // tan(x) [-90, 90]
+                // sin(x) [-90, 90]
+                // cos(x) [0, 180]
+                var x = targetX - cx;
+                var y = cy - targetY;
+                var distance = Math.sqrt(x*x, y*y);
+                rotation = Math.acos(y / distance) * 180 / Math.PI;
+            }
+        }
+        return new LaserBullet({cx: cx, cy: cy, 
+            rotation: rotation, 
+            rectWidth: 30, 
+            rectHeight: 44});
+    } else {
+        return new Bullet({cx: cx, cy: cy});
+    }
 }

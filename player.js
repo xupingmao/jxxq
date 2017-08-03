@@ -131,7 +131,8 @@ PlayerClass.prototype.update = function (timeInfo) {
 PlayerClass.prototype.fireBullet = function (targetX, targetY) {
     var cx = this.x + this.width / 2;
     var cy = this.y + this.height / 2;
-    var bullet = new Bullet({cx: cx, cy: cy});
+    // var bullet = new Bullet({cx: cx, cy: cy});
+    var bullet = createBullet(cx, cy, targetX, targetY);
 
     var width = targetX - cx;
     var height = targetY - cy;
