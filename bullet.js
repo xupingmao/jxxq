@@ -178,7 +178,7 @@ Q.inherit(LaserBullet, Bullet);
 
 function createBullet(cx, cy, targetX, targetY) {
     var rand = Math.random();
-    if (rand <= 0.5) {
+    if (true) {
         var rotation = 0;
         if (targetX && targetY) {
             if (targetX == cx) {

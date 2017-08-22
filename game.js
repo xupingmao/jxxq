@@ -90,6 +90,19 @@
         }, 50);
     }
 
+    function soundInit() {
+        if (canUseLocalStorage) {
+            playSound = (localStorage.getItem('kandi.playSound') === "true")
+
+            if (playSound) {
+                $('.sound').addClass('sound-on').removeClass('sound-off');
+            }
+            else {
+                $('.sound').addClass('sound-off').removeClass('sound-on');
+            }
+        }
+    }
+
     function gameInit() {
         frames = 0;
         canvas = document.getElementById('canvas');
@@ -153,16 +166,7 @@
         Q.toggleDebugRect(stage);
 
         // set the sound preference
-        if (canUseLocalStorage) {
-            playSound = (localStorage.getItem('kandi.playSound') !== "false")
-
-            if (playSound) {
-                $('.sound').addClass('sound-on').removeClass('sound-off');
-            }
-            else {
-                $('.sound').addClass('sound-off').removeClass('sound-on');
-            }
-        }
+        soundInit();
     }
 
     /**
@@ -346,6 +350,7 @@
         // TODO 检测为横屏
         // setTimeout(gameInit, 1000);
         // gameInit();
+        soundInit();
     })
 
     assetLoader.downloadAll();

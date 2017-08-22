@@ -32,7 +32,6 @@ globalConf.bulletWidth = 16;
 globalConf.bulletHeight = 16;
 
 globalConf.grassSpeed = 12;
-globalConf.maxStepWidth = globalConf.grassWidth * 3; // 最大跳跃距离
 
 globalConf.update = function () {
     // 实际大小 1920 * 1080
@@ -84,5 +83,7 @@ globalConf.update = function () {
     globalConf.canvasHeight = $("#canvas").height();
 
     globalConf.roadSpeed = 0.1;
+
+    globalConf.maxStepWidth = globalConf.width * 0.1; // 最大跳跃距离
 }
 

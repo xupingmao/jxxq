@@ -6,12 +6,15 @@ function newBitmap (img, width, height) {
 
     // var scaleX = width / globalConf.width;
     // var scaleY = height / globalConf.height;
-    return new Quark.Bitmap({
+    var img = new Quark.Bitmap({
         image : img,
         rect  : [0, 0, width, height],
-        scaleX: 1,
-        scaleY: 1,
+        // scaleX: globalConf.scaleX,
+        // scaleY: globalConf.scaleY,
     });
+    img.width = width * globalConf.scaleX;
+    img.height = height * globalConf.scaleY;
+    return img;
 }
 
 function BackgroundImage0(img, x, y, width, height, speed) {
@@ -52,6 +55,14 @@ function BackgroundImage0(img, x, y, width, height, speed) {
         if (position == "bottom") {
             y = globalConf.height - height;
         }
+
+        this.width = width * globalConf.scaleX;
+        this.height = height * globalConf.scaleY;
+
+        console.log(this);
+    } else {
+        this.width  = width;
+        this.height = height;
     }
 
     this.rectX = 0;
@@ -61,9 +72,7 @@ function BackgroundImage0(img, x, y, width, height, speed) {
     this.rectHeight = this.image.height;
     this.x = x;
     this.y = y;
-    this.width  = width;
-    this.height = height;
-
+    
     // this.width  = width;
     // this.height = height;
     // this.speed  = 0.2;
@@ -73,13 +82,11 @@ Q.inherit(BackgroundImage0, Q.Bitmap);
 
 function BackgroundImage(img, x, y, width, height, speed) {
     var background = new BackgroundImage0(img, x, y, width, height, speed);
-
     var props = {};
     props.width = width;
     props.height = height;
     props.x = x;
     props.y = y;
-
     BackgroundImage.superClass.constructor.call(this, props);
     this.addChild(background);
 }
@@ -95,6 +102,24 @@ BackgroundImage.prototype.update = function (timeInfo) {
 
     return true;
 }
+
+function ForegroundImage(img, x, speed) {
+    var props = {};
+
+    var img = newBitmap(img);
+    img.alpha = 0.8;
+    props.width = img.width;
+    props.height = img.height;
+    props.x = x;
+    props.y = globalConf.height - img.height;
+    this.speed = speed;
+    ForegroundImage.superClass.constructor.call(this, props);
+    this.addChild(img);
+}
+
+Q.inherit(ForegroundImage, Q.DisplayObjectContainer);
+ForegroundImage.prototype.update = BackgroundImage.prototype.update;
+
 
 function ScrollableClass() {
     var props = {};
@@ -114,6 +139,8 @@ function RoadClass(image, grassCount, x, y) {
     this.grassCount = grassCount;
 
     var grassHeight = globalConf.grassHeight;
+
+    
 
     for (var i = 0; i < this.grassCount; i++) {
         var grass = newBitmap(image);
@@ -138,6 +165,39 @@ RoadClass.prototype.update = function (timeInfo) {
     }
     return true;
 }
+
+var PipeRoadClass = function (x, dummy) {
+    var props = {};
+    PipeRoadClass.superClass.constructor.call(this, props);
+    this.speed = globalConf.grassSpeed;
+
+    // 头 中部 尾
+    var head = assetLoader.imgs.head;
+    var bodies = [assetLoader.imgs.body_1, assetLoader.imgs.body_2, assetLoader.imgs.body_3]
+    var body = pickRandom(bodies);
+    var tail = assetLoader.imgs.tail;
+
+    var headImg = newBitmap(head);
+    var bodyImg = newBitmap(body);
+    var tailImg = newBitmap(tail);
+    bodyImg.x = headImg.x + headImg.width;
+    tailImg.x = bodyImg.x + bodyImg.width;
+
+    // console.log(headImg);
+    // console.log(bodyImg);
+
+    this.addChild(headImg);
+    this.addChild(bodyImg);
+    this.addChild(tailImg);
+
+    this.x = x;
+    this.height = headImg.height;
+    this.y = globalConf.height - this.height;
+    this.width = headImg.width + bodyImg.width + tailImg.width;
+}
+Q.inherit(PipeRoadClass, Q.DisplayObjectContainer);
+
+PipeRoadClass.prototype.update = RoadClass.prototype.update;
 
 WaterClass = function (image, grassCount, x, y) {
     WaterClass.superClass.constructor.call(this, image, grassCount, x, y);
@@ -192,21 +252,21 @@ function BackgroundClass(props) {
     // this.sky = newBitmap(assetLoader.imgs.sky);
     // this.sky.speed = 0.2;
 
-    this.backdrop = new BackgroundImage(assetLoader.imgs.backdrop,
-        0, globalConf.height - globalConf.backdropHeight, 
-        globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
+    // this.backdrop = new BackgroundImage(assetLoader.imgs.backdrop,
+    //     0, globalConf.height - globalConf.backdropHeight, 
+    //     globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
 
-    this.backdrop_2 = new BackgroundImage(assetLoader.imgs.backdrop,
-        globalConf.backdropWidth, globalConf.height - globalConf.backdropHeight,
-        globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
+    // this.backdrop_2 = new BackgroundImage(assetLoader.imgs.backdrop,
+    //     globalConf.backdropWidth, globalConf.height - globalConf.backdropHeight,
+    //     globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
 
-    this.backdrop2 = new BackgroundImage(assetLoader.imgs.backdrop2,
-        0, 0, globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
+    // this.backdrop2 = new BackgroundImage(assetLoader.imgs.backdrop2,
+    //     0, 0, globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
 
     // 前景图
-    this.foreground_1 = new BackgroundImage(assetLoader.imgs.foreground_1, { speed: 0.5, position:"bottom", alpha:0.8, height:200});
-    this.foreground_2 = new BackgroundImage(assetLoader.imgs.foreground_2, {x:globalConf.width/2,  speed:0.5, position:"bottom", alpha:0.8, height:200});
-    this.foreground_3 = new BackgroundImage(assetLoader.imgs.foreground_3, {x:globalConf.width,  speed:0.5, position:"bottom", alpha:0.8, height:200});
+    this.foreground_1 = new ForegroundImage(assetLoader.imgs.foreground_1, 0, 0.5);
+    this.foreground_2 = new ForegroundImage(assetLoader.imgs.foreground_2, this.foreground_1.x + this.foreground_1.width, 0.5);
+    this.foreground_3 = new ForegroundImage(assetLoader.imgs.foreground_3, this.foreground_2.x + this.foreground_2.width, 0.5);
 
     this.actorLayer = new ActorLayerClass();
 
@@ -216,20 +276,24 @@ function BackgroundClass(props) {
     this.addChild(this.bg_2);
     this.addChild(this.sky);
     this.addChild(this.sky_2);
-    this.addChild(this.backdrop);
-    this.addChild(this.backdrop_2);
+    // this.addChild(this.backdrop);
+    // this.addChild(this.backdrop_2);
     this.addChild(this.actorLayer);
 
-    this.addChild(new WaterClass(assetLoader.imgs.water,
-        30, 0, globalConf.height - globalConf.grassHeight));
-    this.addChild(new WaterClass(assetLoader.imgs.water,
-        30, 30 * globalConf.grassWidth, globalConf.height - globalConf.grassHeight));
+    // this.addChild(new WaterClass(assetLoader.imgs.water,
+    //     30, 0, globalConf.height - globalConf.grassHeight));
+    // this.addChild(new WaterClass(assetLoader.imgs.water,
+    //     30, 30 * globalConf.grassWidth, globalConf.height - globalConf.grassHeight));
 
     // 道路
 
     this.roadList = [];
-    this.addRoad(new RoadClass(assetLoader.imgs.space_grass,
-        2, 0, globalConf.height - globalConf.grassHeight));
+    // this.addRoad(new RoadClass(assetLoader.imgs.space_grass,
+    //     2, 0, globalConf.height - globalConf.grassHeight));
+
+    var road1 = new PipeRoadClass(0);
+    this.addRoad(road1);
+    this.addRoad(new PipeRoadClass(road1.x + road1.width + globalConf.maxStepWidth));
     // 敌人
     this.enemyList = [];
 
@@ -259,7 +323,7 @@ BackgroundClass.prototype.addRandRoad = function () {
     var x = globalConf.width;
     var maxY = globalConf.height - globalConf.grassHeight;
     var randHeight = rand(maxY - globalConf.playerHeight, maxY);
-    var randRoad = new RoadClass(assetLoader.imgs.space_grass, rand(1,3), x, randHeight);
+    var randRoad = new PipeRoadClass(x, randHeight);
     this.addRoad(randRoad);
 
     // if (Math.random() >= 0.5) {
@@ -288,13 +352,13 @@ BackgroundClass.prototype.removeEnemy = function (enemy) {
 BackgroundClass.prototype.update = function (timeInfo) {
     if (this.roadList.length == 0) {
         this.addRandRoad();
-    } else if (this.roadList.length == 1){
+    } else {
         // 创建新的随机road
         var lastRoad = this.roadList[this.roadList.length-1];
         var endRange = globalConf.width - lastRoad.x - lastRoad.width;
         if (endRange >= globalConf.maxStepWidth) {
+            // 超过最大的跳跃距离
             this.addRandRoad();
-            console.log("rand overflow")
         }
     }
     return true;

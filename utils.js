@@ -81,3 +81,12 @@ function checkInXRange(rangeObj, target) {
 function distanceOf(x, y, x1, y1) {
   return Math.sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y));
 }
+
+function pickRandom(array) {
+  var length = array.length;
+  var index = parseInt(Math.random() * length);
+  if (index == length) {
+    index -= 1;
+  }
+  return array[index];
+}
