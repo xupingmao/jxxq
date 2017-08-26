@@ -135,8 +135,7 @@
         stage.em = em;
 
         function touchEventCallback(event) {
-            console.log(event);
-
+            // console.log(event);
             // alert(event.eventX);
 
             var width = $("#canvas").width();
@@ -191,6 +190,15 @@
     };
     document.onkeyup = function (e) {
         var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
+        // console.log(keyCode);
+        if (keyCode == 13) {
+            // Enter键切换暂定状态
+            if (window.quark_timer.paused) {
+                window.quark_timer.resume();
+            } else {
+                window.quark_timer.pause();
+            }
+        }
         // if (KEY_CODES[keyCode]) {
         //     e.preventDefault();
         //     KEY_STATUS[KEY_CODES[keyCode]] = false;
@@ -273,6 +281,9 @@
         assetLoader.sounds.bg.currentTime = 0;
         assetLoader.sounds.bg.loop = true;
         assetLoader.sounds.bg.play();
+
+        // 为了方便调试
+        window.background = background;
 
         // $(document).on("touchend", function() {
         //   KEY_STATUS["space"] = true;

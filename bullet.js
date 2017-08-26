@@ -55,6 +55,7 @@ Bullet.prototype.attack = function (targetX, targetY) {
     var cy = this.y - this.height/2;
 
     var distance = 1000;
+    var speed = 2;
 
     if (targetX == cx) {
         x1 = cx;
@@ -66,7 +67,8 @@ Bullet.prototype.attack = function (targetX, targetY) {
         y1 = cy + distance * Math.sin(reg);
     }
     // console.log("Bullet.attack", x1, y1);
-    var tween = new Q.Tween(this, {x: x1, y: y1}, {time: distance/2, onComplete: function () {
+    // 创建子弹飞行动画
+    var tween = new Q.Tween(this, {x: x1, y: y1}, {time: distance/speed, onComplete: function () {
         self.onComplete();
     }});
     tween.start();
@@ -108,12 +110,26 @@ Bullet.attack = function (fromX, fromY, targetX, targetY) {
 
 Bullet.prototype.update = function (timeInfo) {
     // TODO 优化检查次数
+    // var left = this.x;
+    // var right = this.x + this.width;
+    // var top = this.y;
+    // var bottom = this.y + this.height;
+
+    // if (left >= globalConf.width || right <= 0 || top >= globalConf.height || bottom <= 0) {
+    //     this.onComplete();
+    //     return false;
+    // }
+
+    // console.log("check enemy");
     var enemies = stage.background.enemyList;
     var self = this;
+    var x = self.x+self.width/2;
+    var y = self.y+self.height/2;
     enemies.forEach(function (enemy, index, p3) {
         // FIXME 飞行过快导致碰撞检测不准
         // 考虑使用距离检测
-        if (Q.hitTestObject(enemy, self)) {
+        if (Q.hitTestPoint(enemy, x, y, false) >= 0) {
+            console.log("hit enemy " + enemy.id);
             self.explode(enemy);
             enemy.attacked(self);
             return false;

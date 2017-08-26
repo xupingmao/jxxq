@@ -50,19 +50,19 @@ EnemyClass.prototype.update = function (timeInfo) {
     }
 
     if (this.x + this.width <= 0) {
-        this.parent.removeChild(this);
+        stage.background.removeEnemy(this);
     }
     return true;
 }
 
 var towerUpdate = function (timeInfo) {
     this.x -= globalConf.grassSpeed;
-    console.log("tower update");
+    // console.log("tower update");
     if (this.currentFrame == 3) {
         this.stop();
     }
     if (this.x + this.width <= 0) {
-        this.parent.removeChild(this);
+        stage.background.removeEnemy(this);
     }
     return true;
 }
@@ -73,6 +73,7 @@ function createTower(randRoad) {
     tower.update = towerUpdate; 
     tower.width  = globalConf.middleUnitWidth;
     tower.height = globalConf.middleUnitHeight;
+    tower.name = "Tower";
 
     console.log("Add tower", tower);
     return tower;
@@ -82,6 +83,7 @@ function createBunker(randRoad) {
     var bunker = new EnemyClass(assetLoader.imgs.enemy_4, randRoad.x + randRoad.width/2, randRoad.y, 4, 4);
     bunker.width = globalConf.enemyWidth;
     bunker.height = globalConf.enemyHeight;
+    bunker.name = "Bunker";
     return bunker;
 }
 
@@ -90,6 +92,8 @@ function createPlane(randRoad) {
 
     plane.width = globalConf.enemyWidth;
     plane.height = globalConf.enemyHeight;
+    plane.name = "Plane";
+
     return plane;
 }
 
@@ -127,12 +131,7 @@ EnemyClass.prototype.attacked = function (attackObject) {
  * @param randRoad 道路的位置
  */
 function randomEnemy(randRoad) {
-    var value = Math.random();
-    if (value < 0.3) {
-        return createBunker(randRoad);
-    } else if (value >= 0.3 && value <= 0.7) {
-        return createTower(randRoad);
-    } else {
-        return createPlane(randRoad);
-    }
+    // var value = Math.random();
+    var randomCreator = pickRandom([createBunker, createTower, createPlane]);
+    return randomCreator(randRoad);
 }

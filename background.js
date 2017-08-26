@@ -345,8 +345,17 @@ BackgroundClass.prototype.addEnemy = function (enemy) {
 }
 
 BackgroundClass.prototype.removeEnemy = function (enemy) {
-    this.enemyList.remove(enemy);
-    this.actorLayer.removeChild(enemy);
+    var index = this.enemyList.indexOf(enemy);
+    if (index >= 0) { 
+        var r = this.actorLayer.removeChild(enemy);
+        if (r) {
+            this.enemyList.remove(enemy);
+        } else {
+            console.log("removeEnemy failed");
+            console.log(enemy);
+            window.quark_timer.pause();
+        }
+    }
 }
 
 BackgroundClass.prototype.update = function (timeInfo) {
