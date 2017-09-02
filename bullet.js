@@ -126,9 +126,8 @@ Bullet.prototype.update = function (timeInfo) {
     var x = self.x+self.width/2;
     var y = self.y+self.height/2;
     enemies.forEach(function (enemy, index, p3) {
-        // FIXME 飞行过快导致碰撞检测不准
-        // 考虑使用距离检测
-        if (Q.hitTestPoint(enemy, x, y, false) >= 0) {
+        // 碰撞并且敌人出现在屏幕中
+        if (Q.hitTestPoint(enemy, x, y, false) >= 0 && enemy.x < globalConf.width) {
             console.log("hit enemy " + enemy.id);
             self.explode(enemy);
             enemy.attacked(self);

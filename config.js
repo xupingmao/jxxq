@@ -31,7 +31,8 @@ globalConf.roadBoxHeight = 16;
 globalConf.bulletWidth = 16;
 globalConf.bulletHeight = 16;
 
-globalConf.grassSpeed = 12;
+globalConf.grassSpeed = 20;
+globalConf.gravity = 10;
 
 globalConf.update = function () {
     // 实际大小 1920 * 1080
@@ -85,5 +86,7 @@ globalConf.update = function () {
     globalConf.roadSpeed = 0.1;
 
     globalConf.maxStepWidth = globalConf.width * 0.1; // 最大跳跃距离
+    globalConf.grassSpeed = globalConf.grassSpeed * scaleX;
+    globalConf.gravity = globalConf.gravity * scaleX;
 }
 

@@ -36,7 +36,6 @@ function PlayerClass() {
     this.isJumping  = false;
     this.isSecondJumping = false;
     this.isFalling  = false;
-    this.gravity    = 5;
     this.roadHeight = globalConf.roadHeight;
     this.speed = 0.5;
     this.groundY = globalConf.height - this.height;
@@ -54,8 +53,7 @@ PlayerClass.prototype.update = function (timeInfo) {
     // jump if not currently jumping or falling
     if (KEY_STATUS.space && !player.isJumping) {
         this.isJumping   = true;
-        // this.jumpCounter = 12;
-        this.dy          = -30;
+        this.dy = -globalConf.gravity * 8;  // 8帧后落下
         // vt = 1/2 * a * t ^ 2
         // v  = 1/2 * a * t
         // t  = 15  半秒左右
@@ -64,7 +62,7 @@ PlayerClass.prototype.update = function (timeInfo) {
     } else if (KEY_STATUS.space && player.isJumping && !player.isSecondJumping) {
         // 第二次跳跃
         // alert("Yes!");
-        this.dy = -40;
+        this.dy = -globalConf.gravity * 8; // 再加速4帧
         assetLoader.sounds.jump.play();
         player.isSecondJumping = true;
     }
@@ -94,7 +92,7 @@ PlayerClass.prototype.update = function (timeInfo) {
 
     var footY = this.y + this.height;
     if (footY < groundY) {
-        this.dy += this.gravity;
+        this.dy += globalConf.gravity;
         // jumpCounter--;
     } else {
         // 触到地板

@@ -24,6 +24,8 @@ function EnemyClass(props) {
 
     // 相对地板移动速度
     var forwadSpeed = props.forwadSpeed || 0;
+    forwadSpeed = forwadSpeed * globalConf.scaleX;
+
     this.dieFrameIndex = props.dieFrameIndex || 0;
     this.forwadSpeed = globalConf.grassSpeed + forwadSpeed;
 
@@ -176,6 +178,7 @@ function createSanguanpao(randRoad) {
     props.bottom = randRoad.y;
     props.forwardFrameIndex = 0;
     props.dieFrameIndex = 3;
+    props.forwadSpeed = 3;
 
     var enemy = new EnemyClass(props);
     enemy.name = "三管炮";

@@ -11,7 +11,7 @@
     var playSound;
     var platformBase;
     var frames = 0;
-    var enableDebug = true;
+    var enableDebug = ("true" === Q.getUrlParams().debug);
     var fpsCounter;
     var canvasBuffer;
 
@@ -161,8 +161,10 @@
         stage.on("touchend", touchEventCallback);
         stage.on("mouseup", touchEventCallback);
 
-        // 调试矩形区域
-        Q.toggleDebugRect(stage);
+        if (enableDebug) {        
+            // 调试矩形区域
+            Q.toggleDebugRect(stage);
+        }
 
         // set the sound preference
         soundInit();
@@ -269,7 +271,10 @@
         stage.removeAllChildren();
         stage.addChild(background);
         background.addPlayer(player);
-        stage.addChild(textBoard);
+
+        if (enableDebug) {
+            stage.addChild(textBoard);
+        }
 
         stage.background = background;
         stage.player = player;

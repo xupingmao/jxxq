@@ -331,7 +331,7 @@ BackgroundClass.prototype.addRandRoad = function () {
     this.addEnemy(randomEnemy(randRoad));
     // }
 
-    this.addChild(createRandomBox());
+    // this.addChild(createRandomBox());
 }
 
 BackgroundClass.prototype.addPlayer = function (player) {
