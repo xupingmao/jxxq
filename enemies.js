@@ -3,18 +3,30 @@
  *
  **/
 
-function EnemyClass(image, x, bottomY, xCount, yCount, startY) {
-    var props = {};
-    props.image = image;
-    startY = startY || 0;
-
+function EnemyClass(props) {
     EnemyClass.superClass.constructor.call(this, props);
-
     // this.rectWidth = image.width;
     // this.rectHeight = image.height;
 
-    xCount = xCount || 1;
-    yCount = yCount || 1;
+    // left, right, top, bottom
+
+    var image = props.image;
+    var x = props.x;
+    var bottom = props.bottom;
+    var xCount = props.xCount || 1;
+    var yCount = props.yCount || 1;
+    var startY = startY || 0;
+    if (props.forwardFrameIndex) {
+        this.forwardFrameIndex = props.forwardFrameIndex;
+    } else {
+        this.forwardFrameIndex = startY;
+    }
+
+    // 相对地板移动速度
+    var forwadSpeed = props.forwadSpeed || 0;
+    this.dieFrameIndex = props.dieFrameIndex || 0;
+    this.forwadSpeed = globalConf.grassSpeed + forwadSpeed;
+
 
     var rectWidth = image.width / xCount;
     var rectHeight = image.height / yCount;
@@ -23,16 +35,17 @@ function EnemyClass(image, x, bottomY, xCount, yCount, startY) {
     this.height = image.height * globalConf.scaleY / yCount;
 
     this.x = x;
-    this.y = bottomY - this.height;
+    this.y = bottom - this.height;
 
     this.xCount = xCount;
     this.yCount = yCount;
     this.rectWidth = rectWidth;
     this.rectHeight = rectHeight;
+    this.dead = false;
 
     for (var i = 0; i < xCount; i++) {
         var x = rectWidth * i;
-        var y = startY;
+        var y = this.forwardFrameIndex * this.height;
         var rect = [x, y, rectWidth, rectHeight];
         this.addFrame({rect: rect, interval: 100});
     }
@@ -41,7 +54,7 @@ function EnemyClass(image, x, bottomY, xCount, yCount, startY) {
 Q.inherit(EnemyClass, Q.MovieClip);
 
 EnemyClass.prototype.update = function (timeInfo) {
-    this.x -= globalConf.grassSpeed;
+    this.x -= this.forwadSpeed;
 
     if (!this.hit && Q.hitTestObject(stage.player, this)) {
         stage.addChild(new FogBullet(this.x + this.width/2, this.y+this.height/2));
@@ -54,6 +67,40 @@ EnemyClass.prototype.update = function (timeInfo) {
     }
     return true;
 }
+
+/**
+ * 每个对象都有 attacked 方法
+ * 调用该方法时会自己减少生命值,执行死亡过程等等
+ */
+EnemyClass.prototype.attacked = function (attackObject) {
+    if (this.dead) {
+        return;
+    }
+    this.dead = true;
+    // TODO 暂时实现成一次攻击就死亡
+    var xCount = this.xCount;
+    var yCount = this.yCount;
+
+    var rectWidth = this.rectWidth;
+    var rectHeight = this.rectHeight;
+
+    var interval = 100;
+
+    this.stop();
+    for (var i = 0; i < xCount; i++) {
+        var x = rectWidth * i;
+        var y = this.dieFrameIndex * rectHeight;
+        var rect = [x, y, rectWidth, rectHeight];
+        this.setFrame({rect: rect, interval: interval}, i);
+    }
+    var self = this;
+    this.gotoAndPlay(0);
+
+    setTimeout(function () {
+        stage.background.removeEnemy(self);
+    }, interval * (xCount-1));
+}
+
 
 var towerUpdate = function (timeInfo) {
     this.x -= globalConf.grassSpeed;
@@ -68,8 +115,14 @@ var towerUpdate = function (timeInfo) {
 }
 
 function createTower(randRoad) {
-    var tower = new EnemyClass(assetLoader.imgs.enemy_5, randRoad.x + randRoad.width/2, randRoad.y, 4, 1);
+    var props = {};
+    props.image = assetLoader.imgs.enemy_5;
+    props.x = randRoad.x;
+    props.bottom = randRoad.y;
+    props.xCount = 4;
+    props.yCount = 1;
 
+    var tower = new EnemyClass(props);
     tower.update = towerUpdate; 
     tower.width  = globalConf.middleUnitWidth;
     tower.height = globalConf.middleUnitHeight;
@@ -80,50 +133,106 @@ function createTower(randRoad) {
 }
 
 function createBunker(randRoad) {
-    var bunker = new EnemyClass(assetLoader.imgs.enemy_4, randRoad.x + randRoad.width/2, randRoad.y, 4, 4);
+    var props = {};
+    props.image = assetLoader.imgs.enemy_4;
+    props.x = randRoad.x + randRoad.width/2;
+    props.xCount = 8;
+    props.yCount = 3;
+    props.bottom = randRoad.y;
+
+    // var bunker = new EnemyClass(assetLoader.imgs.enemy_4, randRoad.x + randRoad.width/2, randRoad.y, 4, 4);
+    var bunker = new EnemyClass(props);
     bunker.width = globalConf.enemyWidth;
     bunker.height = globalConf.enemyHeight;
     bunker.name = "Bunker";
+    bunker.dieFrameIndex = 2;
     return bunker;
 }
 
 function createPlane(randRoad) {
-    var plane = new EnemyClass(assetLoader.imgs.enemy_3, randRoad.x + randRoad.width/2, randRoad.y - globalConf.height/4, 4, 4);
+    var props = {};
+    props.image = assetLoader.imgs.enemy_3;
+    props.x = randRoad.x + randRoad.width/2;
+    props.bottom = randRoad.y - globalConf.height/4;
+    props.xCount = 8;
+    props.yCount = 2;
+
+    var plane = new EnemyClass(props);
 
     plane.width = globalConf.enemyWidth;
     plane.height = globalConf.enemyHeight;
     plane.name = "Plane";
-
+    plane.dieFrameIndex = 1;
     return plane;
 }
 
-/**
- * 每个对象都有 attacked 方法
- * 调用该方法时会自己减少生命值,执行死亡过程等等
- */
-EnemyClass.prototype.attacked = function (attackObject) {
-    // TODO 暂时实现成一次攻击就死亡
-    var xCount = this.xCount;
-    var yCount = this.yCount;
+// 三管炮
+function createSanguanpao(randRoad) {
+    var props = {};
+    props.image = assetLoader.imgs.enemy_6;
+    props.x = randRoad.x + randRoad.width/2;
+    props.xCount = 8;
+    props.yCount = 4;
+    props.bottom = randRoad.y;
+    props.forwardFrameIndex = 0;
+    props.dieFrameIndex = 3;
 
-    var rectWidth = this.rectWidth;
-    var rectHeight = this.rectHeight;
+    var enemy = new EnemyClass(props);
+    enemy.name = "三管炮";
+    return enemy;
+}
 
-    var interval = 100;
+// 蜘蛛精
+function createZhizhujing(randRoad) {
+    // 运动，缩回，开火，爆炸
+    var props = {};
+    props.image = assetLoader.imgs.enemy_7;
+    props.x = randRoad.x + randRoad.width/2;
+    props.xCount = 8;
+    props.yCount = 4;
+    props.bottom = randRoad.y;
+    props.forwardFrameIndex = 0;
+    props.dieFrameIndex = 3;
+    props.forwadSpeed = 3;
 
-    this.stop();
-    for (var i = 0; i < xCount; i++) {
-        var x = rectWidth * i;
-        var y = 2 * rectHeight;
-        var rect = [x, y, rectWidth, rectHeight];
-        this.setFrame({rect: rect, interval: interval}, i);
-    }
-    var self = this;
-    this.gotoAndPlay(0);
+    var enemy = new EnemyClass(props);
+    enemy.name = "蜘蛛精";
+    return enemy;
+}
 
-    setTimeout(function () {
-        stage.background.removeEnemy(self);
-    }, interval * (xCount-1));
+// 小滚轮
+function createXiaogunlun(randRoad) {
+    // 运动，直射，扫射，爆炸
+    var props = {};
+    props.image = assetLoader.imgs.enemy_8;
+    props.x = randRoad.x + randRoad.width/2;
+    props.xCount = 8;
+    props.yCount = 4;
+    props.bottom = randRoad.y;
+    props.forwardFrameIndex = 0;
+    props.dieFrameIndex = 3;
+    props.forwadSpeed = 5;
+
+    var enemy = new EnemyClass(props);
+    enemy.name = "小滚轮";
+    return enemy;
+}
+
+// 雷达
+function createLeida(randRoad) {
+    // 下蹲起立，爆炸
+    var props = {};
+    props.image = assetLoader.imgs.enemy_9;
+    props.x = randRoad.x + randRoad.width/2;
+    props.xCount = 8;
+    props.yCount = 2;
+    props.bottom = randRoad.y;
+    props.forwardFrameIndex = 0;
+    props.dieFrameIndex = 1;
+
+    var enemy = new EnemyClass(props);
+    enemy.name = "雷达";
+    return enemy;
 }
 
 /**
@@ -132,6 +241,6 @@ EnemyClass.prototype.attacked = function (attackObject) {
  */
 function randomEnemy(randRoad) {
     // var value = Math.random();
-    var randomCreator = pickRandom([createBunker, createTower, createPlane]);
+    var randomCreator = pickOne([createBunker, createLeida, createXiaogunlun, createZhizhujing, createPlane, createSanguanpao]);
     return randomCreator(randRoad);
 }

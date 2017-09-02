@@ -90,3 +90,13 @@ function pickRandom(array) {
   }
   return array[index];
 }
+
+window._pickOneIndex = 0;
+function pickOne(array) {
+  if (window._pickOneIndex >= array.length) {
+    window._pickOneIndex = 0;
+  } else {
+    window._pickOneIndex ++;
+  }
+  return array[window._pickOneIndex];
+}
