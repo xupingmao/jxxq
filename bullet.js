@@ -54,7 +54,7 @@ Bullet.prototype.attack = function (targetX, targetY) {
     var cx = this.x - this.width/2;
     var cy = this.y - this.height/2;
 
-    var distance = 1000;
+    var distance = globalConf.width;
     var speed = 2;
 
     if (targetX == cx) {

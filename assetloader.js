@@ -43,6 +43,7 @@ var assetLoader = (function() {
         'foreground_1': 'imgs/foreground_1.png',
         'foreground_2': 'imgs/foreground_2.png',
         'foreground_3': 'imgs/foreground_3.png',
+        'sgp_bullet_2': 'imgs/sgp_bullet_2.png',
     };
 
   // sounds dictionary
@@ -108,11 +109,14 @@ var assetLoader = (function() {
 
         // create a closure for event binding
         (function(_this, img) {
-          _this.imgs[img] = new Image();
+          var element = new Image();
+          _this.imgs[img] = element;
           _this.imgs[img].status = 'loading';
           _this.imgs[img].name = img;
           _this.imgs[img].onload = function() { assetLoaded.call(_this, 'imgs', img) };
           _this.imgs[img].src = src;
+          element.style.display = "none";
+          document.body.appendChild(element);
         })(_this, img);
       }
     }

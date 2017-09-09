@@ -20,11 +20,11 @@
     function resizeStage() {
         var canvasWidth = $("#canvas").width();
         var canvasHeight = $("#canvas").height();
+        console.log(canvasWidth, canvasHeight);
 
-        var height = Math.min(globalConf.height, canvasHeight);
+        var height = Math.min(1300, canvasHeight);
         // var ratio = 480 / 640;
-        var ratio = canvasHeight / canvasWidth;
-        var width = height / ratio;
+        var width = height * canvasWidth / canvasHeight;
         
         var displayWidth = width;
         var displayHeight = height;
@@ -41,33 +41,49 @@
             // alert(window.orientation);
         }
 
-        return {"width": width, "height": height};
+        return {"width": width, "height": height, 
+            "canvasHeight": canvasHeight, "canvasWidth": canvasWidth};
     }
 
     /** 游戏舞台 **/
     var GameStage = function (props) {
         // props.width = "100%";
         // props.height = "100%";
-
         var rect = resizeStage();
+        console.log(rect);
         var width = rect.width;
         var height = rect.height;
+        var ctxWidth = rect.canvasWidth;
+        var ctxHeight = rect.canvasHeight;
+
         console.log(width, height);
 
-        props.width = width;
-        props.height = height;
-        props.scaleX = 1;
-        props.scaleY = 1;
+        // width, height 是canvas的宽高，这里是为了获取canvas的长宽比
+        // 1920 * 1300 是希望展示的大小,以高度为准，水平多余的砍掉或者不足的补充
+        // quarkjs通过css style来缩放stage
 
-        $("#canvas").attr("width", width);
-        $("#canvas").attr("height", height);
+        props.width = 1300 * width / height;
+        props.height = 1300;
+
+        var scale = height / props.height;
+
+        globalConf.width = props.width;
+        globalConf.height = props.height;
+
+        // props.width = width;
+        // props.height = height;
+
+        // props.width =   rect.width / scale;
+        // props.height =  rect.height / scale;
+
+        props.scaleX = scale;
+        props.scaleY = scale;
+
+        $("#canvas").attr("width", props.width);
+        $("#canvas").attr("height", props.height);
 
         GameStage.superClass.constructor.call(this, props);
-
-        this._scaleX = 1;
-        this._scaleY = 1;
         this.frames = 0;
-
         this.score = 0;
     }
 
@@ -129,7 +145,7 @@
 
         /** 事件管理器 **/
         var em = new Q.EventManager();
-        var events = Q.supportTouch ? ["touchend"] : ["mousedown", "mouseup", "mousemove", "mouseout"];
+        var events = Q.supportTouch ? ["touchstart"] : ["mousedown", "mouseup", "mousemove", "mouseout"];
         em.registerStage(stage, events, true, true);
 
         stage.em = em;
@@ -138,12 +154,14 @@
             // console.log(event);
             // alert(event.eventX);
 
-            var width = $("#canvas").width();
-            var height = $("#canvas").height();
+            var width = globalConf.width;
+            var height = globalConf.height;
 
             // 浏览器只有eventX
             var x = event.eventX;
             var y = event.eventY;
+
+            // console.log(event);
 
             // alert(x);
 
@@ -152,14 +170,12 @@
                 // 第二次跳跃
                 setJumpState();
             } else {
-                var _x = x / width * globalConf.width;
-                var _y = y / height * globalConf.height;
-                KEY_STATUS["fireBullet"] = {x: _x, y: _y};
+                KEY_STATUS["fireBullet"] = {x: x, y: y};
             }
         }
 
-        stage.on("touchend", touchEventCallback);
-        stage.on("mouseup", touchEventCallback);
+        stage.on("touchstart", touchEventCallback);
+        stage.on("mousedown", touchEventCallback);
 
         if (enableDebug) {        
             // 调试矩形区域

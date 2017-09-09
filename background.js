@@ -59,7 +59,7 @@ function BackgroundImage0(img, x, y, width, height, speed) {
         this.width = width * globalConf.scaleX;
         this.height = height * globalConf.scaleY;
 
-        console.log(this);
+        // console.log(this);
     } else {
         this.width  = width;
         this.height = height;
@@ -83,8 +83,8 @@ Q.inherit(BackgroundImage0, Q.Bitmap);
 function BackgroundImage(img, x, y, width, height, speed) {
     var background = new BackgroundImage0(img, x, y, width, height, speed);
     var props = {};
-    props.width = width;
-    props.height = height;
+    props.width = img.width;
+    props.height = img.height;
     props.x = x;
     props.y = y;
     BackgroundImage.superClass.constructor.call(this, props);
@@ -102,6 +102,27 @@ BackgroundImage.prototype.update = function (timeInfo) {
 
     return true;
 }
+
+function NewBackgroundImage(img, x, y, speed) {
+    var props = {};
+    props.x = x;
+    props.y = y;
+    props.width = img.width;
+    props.height = img.height;
+    NewBackgroundImage.superClass.constructor.call(this, props);
+    this.speed = speed;
+    this.addChild(createBitmap(img));
+}
+Q.inherit(NewBackgroundImage, Q.DisplayObjectContainer);
+
+NewBackgroundImage.prototype.update = function (timeInfo) {
+    this.x -= this.speed;
+    if (this.x + this.width <= 0) {
+        this.x = Math.max(this.width, globalConf.width);
+    }
+    return true;
+}
+
 
 function ForegroundImage(img, x, speed) {
     var props = {};
@@ -236,32 +257,9 @@ function BackgroundClass(props) {
     this.y = 0;
     BackgroundClass.superClass.constructor.call(this, props);
 
-    this.bg  = new BackgroundImage(assetLoader.imgs.bg, 
-        0, 0, globalConf.bgWidth, globalConf.height, 0.1);
-    
-    this.bg_2  = new BackgroundImage(assetLoader.imgs.bg, 
-        globalConf.bgWidth, 0, globalConf.bgWidth, globalConf.height, 0.1);
-
-
-    this.sky = new BackgroundImage(assetLoader.imgs.sky,
-        0, 0, globalConf.skyWidth, globalConf.skyHeight, 0.2);
-
-    this.sky_2 = new BackgroundImage(assetLoader.imgs.sky,
-        globalConf.skyWidth, 0, globalConf.skyWidth, globalConf.skyHeight, 0.2);
-
-    // this.sky = newBitmap(assetLoader.imgs.sky);
-    // this.sky.speed = 0.2;
-
-    // this.backdrop = new BackgroundImage(assetLoader.imgs.backdrop,
-    //     0, globalConf.height - globalConf.backdropHeight, 
-    //     globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
-
-    // this.backdrop_2 = new BackgroundImage(assetLoader.imgs.backdrop,
-    //     globalConf.backdropWidth, globalConf.height - globalConf.backdropHeight,
-    //     globalConf.backdropWidth, globalConf.backdropHeight, 0.3);
-
-    // this.backdrop2 = new BackgroundImage(assetLoader.imgs.backdrop2,
-    //     0, 0, globalConf.backdrop2Width, globalConf.backdrop2Height, 0.6);
+    this.bg  = new NewBackgroundImage(assetLoader.imgs.bg, 0, 0, 0.1);
+    this.bg_2  = new NewBackgroundImage(assetLoader.imgs.bg, 
+        assetLoader.imgs.bg.width, 0, 0.1);
 
     // 前景图
     this.foreground_1 = new ForegroundImage(assetLoader.imgs.foreground_1, 0, 0.5);
@@ -274,8 +272,6 @@ function BackgroundClass(props) {
     // 最远景
     this.addChild(this.bg);
     this.addChild(this.bg_2);
-    this.addChild(this.sky);
-    this.addChild(this.sky_2);
     // this.addChild(this.backdrop);
     // this.addChild(this.backdrop_2);
     this.addChild(this.actorLayer);
@@ -309,14 +305,14 @@ BackgroundClass.prototype.addRoad = function (road) {
     road.background = this;
     this.roadList.push(road);
     this.actorLayer.addChild(road);
-    console.log("add road " + road);
+    // console.log("add road " + road);
 }
 
 BackgroundClass.prototype.removeRoad = function (road) {
     this.actorLayer.removeChild(road);
     var index = this.roadList.indexOf(road);
     this.roadList.splice(index, 1);
-    console.log(road + " removed");
+    // console.log(road + " removed");
 }
 
 BackgroundClass.prototype.addRandRoad = function () {

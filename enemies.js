@@ -58,7 +58,7 @@ Q.inherit(EnemyClass, Q.MovieClip);
 EnemyClass.prototype.update = function (timeInfo) {
     this.x -= this.forwadSpeed;
 
-    if (!this.hit && Q.hitTestObject(stage.player, this)) {
+    if (!this.dead && !this.hit && Q.hitTestObject(stage.player, this)) {
         stage.addChild(new FogBullet(this.x + this.width/2, this.y+this.height/2));
         assetLoader.sounds.bom_attack.play();
         this.hit = true;
@@ -93,7 +93,11 @@ EnemyClass.prototype.attacked = function (attackObject) {
         var x = rectWidth * i;
         var y = this.dieFrameIndex * rectHeight;
         var rect = [x, y, rectWidth, rectHeight];
-        this.setFrame({rect: rect, interval: interval}, i);
+        if (i == xCount-1) {
+            this.setFrame({rect: rect, interval: interval, stop: true}, i);
+        } else {
+            this.setFrame({rect: rect, interval: interval}, i);
+        }
     }
     var self = this;
     this.gotoAndPlay(0);
@@ -107,9 +111,6 @@ EnemyClass.prototype.attacked = function (attackObject) {
 var towerUpdate = function (timeInfo) {
     this.x -= globalConf.grassSpeed;
     // console.log("tower update");
-    if (this.currentFrame == 3) {
-        this.stop();
-    }
     if (this.x + this.width <= 0) {
         stage.background.removeEnemy(this);
     }
@@ -179,9 +180,11 @@ function createSanguanpao(randRoad) {
     props.forwardFrameIndex = 0;
     props.dieFrameIndex = 3;
     props.forwadSpeed = 3;
+    props.canFireBullet = true;
 
     var enemy = new EnemyClass(props);
     enemy.name = "三管炮";
+
     return enemy;
 }
 

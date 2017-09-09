@@ -93,10 +93,50 @@ function pickRandom(array) {
 
 window._pickOneIndex = 0;
 function pickOne(array) {
+  window._pickOneIndex ++;
   if (window._pickOneIndex >= array.length) {
     window._pickOneIndex = 0;
-  } else {
-    window._pickOneIndex ++;
-  }
+  } 
   return array[window._pickOneIndex];
 }
+
+
+function createBitmap(img) {
+    var width = img.width;
+    var height = img.height;
+    var bitmap = new Quark.Bitmap({
+        image: img,
+        width: width,
+        height: height,
+        rect : [0, 0, width, height]
+    });
+    return bitmap;
+}
+
+function createMovieClip(image, cols, rows, rowIndex, interval) {
+    var movieClip = new Q.MovieClip({
+    image: image,
+    useFrames: true,
+    interval: interval,
+    x:0,
+    y:0
+  });
+    var rectWidth = image.width / cols;
+    var rectHeight = image.height / rows;
+    for (var i = 0; i < cols; i++) {
+        var x = rectWidth * i;
+        var y = rowIndex * rectHeight;
+        var rect = [x, y, rectWidth, rectHeight];
+        movieClip.addFrame({rect: rect, interval: interval});
+    }
+    return movieClip;
+}
+
+function reverseMovieClip(movieClip) {
+    movieClip._frames.reverse();
+}
+
+function setMovieClipStop(movieClip, index) {
+    movieClip._frames[index].stop = true;
+}
+

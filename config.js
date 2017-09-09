@@ -2,8 +2,10 @@
 
 var globalConf = {};
 
-globalConf.width  = 640 * 1.5;
-globalConf.height = 480 * 1.5;
+// globalConf.width  = 640 * 1.5;
+// globalConf.height = 480 * 1.5;
+globalConf.width = 3840 / 2;
+globalConf.height = 1300;
 
 globalConf.playerWidth = 32;
 globalConf.playerHeight = 64;
@@ -40,8 +42,10 @@ globalConf.update = function () {
     // var scaleX = globalConf.width / 640;
     // var scaleY = globalConf.height / 480;
 
-    var scaleY = globalConf.height / 1080 ;
+    // var scaleY = globalConf.height / 1300 ;
+    var scaleY = 1;
     var scaleX = scaleY;
+    // 最外层的stage缩放即可
 
     globalConf.largeUnitWidth = scaleX * 256;
     globalConf.largeUnitHeight = scaleY * 256;
