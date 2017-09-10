@@ -26,7 +26,7 @@ function PlayerClass() {
     this.width  = globalConf.playerWidth;
     this.height = globalConf.playerHeight;
     this.x = globalConf.width / 4;
-    this.y = globalConf.height - this.height - globalConf.roadHeight;
+    this.y = globalConf.roadY - this.height;
     this.originY = this.y;
 
     this.dx = 0;
@@ -37,8 +37,9 @@ function PlayerClass() {
     this.isSecondJumping = false;
     this.isFalling  = false;
     this.roadHeight = globalConf.roadHeight;
-    this.speed = 0.5;
-    this.groundY = globalConf.height - this.height;
+    this.speed = 0.5 / 30;
+    this.life = 5;
+    this.killed = 0;
 }
 
 Q.inherit(PlayerClass, Q.Bitmap);
@@ -47,11 +48,14 @@ PlayerClass.prototype.update = function (timeInfo) {
     // console.log(timeInfo);
     var player = this;
     var jumpCounter = this.jumpCounter;
-
-    // return;
+    var bottom = this.y + this.height;
+    // 地板的y值
+    var roadY   = globalConf.roadY;
+    var groundY = stage.background.getY(this);
+    stage.score += this.speed;
 
     // jump if not currently jumping or falling
-    if (KEY_STATUS.space && !player.isJumping) {
+    if (KEY_STATUS.space && !player.isJumping && bottom <= roadY) {
         this.isJumping   = true;
         this.dy = -globalConf.gravity * 8;  // 8帧后落下
         // vt = 1/2 * a * t ^ 2
@@ -67,35 +71,17 @@ PlayerClass.prototype.update = function (timeInfo) {
         player.isSecondJumping = true;
     }
 
-    // jump higher if the space bar is continually pressed
-    // else if (KEY_STATUS.space && jumpCounter) {
-    //     player.dy = player.jumpDy;
-    //     this.isJumping = true;
-    // } 
-
-    // else {
-    //     player.dy = 0;
-    // }
-
-    // this.x += this.dx;
-    // this.y += this.dy;
-
-    // add gravity
-    // if (this.isFalling || this.isJumping) {
-    //   this.dy += this.gravity;
-    // }
-
-    // this.dy += this.gravity;
     this.y += this.dy;
-
-    var groundY = stage.background.getY(this);
-
     var footY = this.y + this.height;
     if (footY < groundY) {
         this.dy += globalConf.gravity;
         // jumpCounter--;
     } else {
-        // 触到地板
+        // 掉到道路下面了
+        if (!stage.enableDebug && bottom > roadY) {
+            this.die();
+            return false;
+        }
         this.dy = 0;
         this.y  = groundY - this.height;
         this.isJumping = false;
@@ -135,8 +121,23 @@ PlayerClass.prototype.fireBullet = function (targetX, targetY) {
     var width = targetX - cx;
     var height = targetY - cy;
     bullet.attack(targetX, targetY);
-    console.log(targetX, targetY);
+    // console.log(targetX, targetY);
     stage.addChild(bullet);
 
     assetLoader.sounds.bullet_attack.play();
+}
+
+PlayerClass.prototype.attacked = function (atkObj) {
+    this.life--;
+    if (this.life <= 0) {
+        this.die();
+    }
+}
+
+PlayerClass.prototype.die = function () {
+    if (stage.enableDebug) {
+        return;
+    }
+    stage.paused = true;
+    stage.gameOver();
 }

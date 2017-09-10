@@ -61,7 +61,7 @@ globalConf.update = function () {
     globalConf.height = parseInt(globalConf.height);
     globalConf.width  = parseInt(globalConf.width);
 
-    globalConf.roadHeight = globalConf.height / 4;
+    globalConf.roadHeight = assetLoader.imgs.head.height;
     globalConf.bgWidth = globalConf.height  / 1300 * 3840;
     globalConf.bgHeight = globalConf.height;
 
@@ -88,9 +88,10 @@ globalConf.update = function () {
     globalConf.canvasHeight = $("#canvas").height();
 
     globalConf.roadSpeed = 0.1;
+    globalConf.roadY = globalConf.height - globalConf.roadHeight;
 
-    globalConf.maxStepWidth = globalConf.width * 0.1; // 最大跳跃距离
-    globalConf.grassSpeed = globalConf.grassSpeed * scaleX;
+    globalConf.maxStepWidth = 256; // 最大跳跃距离
+    globalConf.grassSpeed = 20;
     globalConf.gravity = globalConf.gravity * scaleX;
 }
 

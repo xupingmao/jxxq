@@ -33,8 +33,9 @@ function EnemyClass(props) {
     var rectWidth = image.width / xCount;
     var rectHeight = image.height / yCount;
 
-    this.width = image.width * globalConf.scaleX / xCount;
-    this.height = image.height * globalConf.scaleY / yCount;
+    this.width = image.width  / xCount;
+    this.height = image.height / yCount;
+    this.bullet = props.bullet;
 
     this.x = x;
     this.y = bottom - this.height;
@@ -44,6 +45,7 @@ function EnemyClass(props) {
     this.rectWidth = rectWidth;
     this.rectHeight = rectHeight;
     this.dead = false;
+    this.count = 0;
 
     for (var i = 0; i < xCount; i++) {
         var x = rectWidth * i;
@@ -56,10 +58,14 @@ function EnemyClass(props) {
 Q.inherit(EnemyClass, Q.MovieClip);
 
 EnemyClass.prototype.update = function (timeInfo) {
+    this.count ++;
     this.x -= this.forwadSpeed;
+    var self = this;
 
     if (!this.dead && !this.hit && Q.hitTestObject(stage.player, this)) {
-        stage.addChild(new FogBullet(this.x + this.width/2, this.y+this.height/2));
+        stage.addChild(new FogBullet(this.x + this.width/2, this.y+this.height/2, function () {
+            stage.player.attacked(self);
+        }));
         assetLoader.sounds.bom_attack.play();
         this.hit = true;
     }
@@ -67,6 +73,15 @@ EnemyClass.prototype.update = function (timeInfo) {
     if (this.x + this.width <= 0) {
         stage.background.removeEnemy(this);
     }
+
+    if (!this.dead && this.bullet && (this.count % this.bullet.interval == 0)) {
+        var bullet = this.bullet.copy();
+        bullet.x = this.x + this.bullet.offsetX;
+        bullet.y = this.y + this.bullet.offsetY;
+        console.log("fire bullet", bullet);
+        stage.background.addEnemy(bullet);
+    }
+
     return true;
 }
 
@@ -85,7 +100,6 @@ EnemyClass.prototype.attacked = function (attackObject) {
 
     var rectWidth = this.rectWidth;
     var rectHeight = this.rectHeight;
-
     var interval = 100;
 
     this.stop();
@@ -105,6 +119,8 @@ EnemyClass.prototype.attacked = function (attackObject) {
     setTimeout(function () {
         stage.background.removeEnemy(self);
     }, interval * (xCount-1));
+
+    stage.player.killed++;
 }
 
 
@@ -131,7 +147,6 @@ function createTower(randRoad) {
     tower.height = globalConf.middleUnitHeight;
     tower.name = "Tower";
 
-    console.log("Add tower", tower);
     return tower;
 }
 
@@ -181,6 +196,12 @@ function createSanguanpao(randRoad) {
     props.dieFrameIndex = 3;
     props.forwadSpeed = 3;
     props.canFireBullet = true;
+
+    var bullet = new EnemyBullet(assetLoader.imgs.sgp_bullet_2, globalConf.grassSpeed*2);
+    bullet.offsetX = 0;
+    bullet.offsetY = 290;
+    bullet.interval = 50;
+    props.bullet = bullet;
 
     var enemy = new EnemyClass(props);
     enemy.name = "三管炮";
@@ -247,6 +268,8 @@ function createLeida(randRoad) {
  */
 function randomEnemy(randRoad) {
     // var value = Math.random();
-    var randomCreator = pickOne([createBunker, createLeida, createXiaogunlun, createZhizhujing, createPlane, createSanguanpao]);
+    // return createSanguanpao(randRoad);
+    // var randomCreator = pickOne([createBunker, createLeida, createXiaogunlun, createZhizhujing, createPlane, createSanguanpao]);
+    var randomCreator = pickOne([createBunker, createSanguanpao, createPlane, createSanguanpao]);
     return randomCreator(randRoad);
 }

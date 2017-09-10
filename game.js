@@ -29,10 +29,6 @@
         var displayWidth = width;
         var displayHeight = height;
 
-        globalConf.width = width;
-        globalConf.height = height;
-        globalConf.update();
-
         if (window.stage
                 && canvasWidth != globalConf.canvasWidth
                 && canvasHeight != globalConf.canvasHeight) {
@@ -69,6 +65,8 @@
 
         globalConf.width = props.width;
         globalConf.height = props.height;
+
+        globalConf.update();
 
         // props.width = width;
         // props.height = height;
@@ -161,10 +159,6 @@
             var x = event.eventX;
             var y = event.eventY;
 
-            // console.log(event);
-
-            // alert(x);
-
             if (x < width / 3) {
                 // 左侧1/3
                 // 第二次跳跃
@@ -181,6 +175,8 @@
             // 调试矩形区域
             Q.toggleDebugRect(stage);
         }
+
+        stage.enableDebug = enableDebug;
 
         // set the sound preference
         soundInit();
@@ -287,13 +283,11 @@
         stage.removeAllChildren();
         stage.addChild(background);
         background.addPlayer(player);
-
-        if (enableDebug) {
-            stage.addChild(textBoard);
-        }
+        stage.addChild(textBoard);
 
         stage.background = background;
         stage.player = player;
+        stage.gameOver = gameOver;
 
         quark_timer.addListener(stage);   // 舞台刷新
         quark_timer.addListener(Q.Tween); // 动画
@@ -317,9 +311,9 @@
      */
     function gameOver() {
         stop = true;
-        $('#score').html(score);
+        $('#score').html(stage.score.toFixed(1));
         $('#game-over').show();
-        assetLoader.sounds.bg.pause();
+        assetLoader.pauseSounds();
         assetLoader.sounds.gameOver.currentTime = 0;
         assetLoader.sounds.gameOver.play();
     }

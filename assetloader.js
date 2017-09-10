@@ -51,8 +51,8 @@ var assetLoader = (function() {
     'bg'            : 'sounds/bg.mp3',
     'jump'          : 'sounds/jump.mp3',
     'gameOver'      : 'sounds/gameOver.mp3',
-      'bullet_attack': 'sounds/bullet_attack.wav',
-      'bom_attack': 'sounds/bom_attack.wav',
+    'bullet_attack': 'sounds/bullet_attack.wav',
+    'bom_attack': 'sounds/bom_attack.wav',
   };
 
   var assetsLoaded = 0;                                // how many assets have been loaded
@@ -142,11 +142,21 @@ var assetLoader = (function() {
     }
   }
 
+  this.pauseSounds = function () {
+    for (var sound in this.sounds) {
+      if (this.sounds.hasOwnProperty(sound)) {
+        sound = this.sounds[sound];
+        sound.pause();
+      }
+    }
+  }
+
   return {
     imgs: this.imgs,
     sounds: this.sounds,
     totalAssest: this.totalAssest,
-    downloadAll: this.downloadAll
+    downloadAll: this.downloadAll,
+    pauseSounds: this.pauseSounds,
   };
 })();
 

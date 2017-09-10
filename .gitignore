@@ -1,1 +1,7 @@
 imgs/
+*.wav
+*.zip
+*.png
+*.gif
+*.jpg
+/.idea/

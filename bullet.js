@@ -137,7 +137,7 @@ Bullet.prototype.update = function (timeInfo) {
     return true;
 }
 
-function FogBullet(cx, cy) {
+function FogBullet(cx, cy, completedCallback) {
     var props = {};
     props.image = assetLoader.imgs.bullet;
     FogBullet.superClass.constructor.call(this, props);
@@ -145,6 +145,7 @@ function FogBullet(cx, cy) {
     this.height = 64;
     this.x = cx - this.width;
     this.y = cy - this.height;
+    this.completedCallback = completedCallback;
 
     this.addFrame([
         {rect: [0, 0, 64, 64]}
@@ -164,6 +165,9 @@ function FogBullet(cx, cy) {
 Q.inherit(FogBullet, Q.MovieClip);
 
 FogBullet.prototype.onComplete = function () {
+    if (this.completedCallback) {
+        this.completedCallback();
+    }
     this.parent.removeChild(this);
 }
 
@@ -217,4 +221,45 @@ function createBullet(cx, cy, targetX, targetY) {
     } else {
         return new Bullet({cx: cx, cy: cy});
     }
+}
+
+
+function EnemyBullet(img, speed) {
+    var props = {};
+    props.image = img;
+    props.width = img.width;
+    props.height = img.height;
+    props.x = 0;
+    props.y = 0;
+    props.rect = [0, 0, img.width, img.height];
+    Bullet.superClass.constructor.call(this,props);
+    this.speed = speed;
+}
+
+Q.inherit(EnemyBullet, Q.Bitmap);
+
+EnemyBullet.prototype.update = function (timeInfo) {
+    this.x -= this.speed;
+    var left = this.x;
+    if (this.dead) {
+        this.parent.removeChild(this);
+        return;
+    }
+    if (left < 0) {
+        this.parent.removeChild(this);
+        return false;
+    }
+    if (Q.hitTestObject(this, stage.player)) {
+        this.dead = true;
+        stage.player.attacked(this);
+    }
+    return true;
+}
+
+EnemyBullet.prototype.copy = function (timeInfo) {
+    return new EnemyBullet(this.image, this.speed);
+}
+
+EnemyBullet.prototype.attacked = function (attackObject) {
+    this.parent.removeChild(this);
 }

@@ -140,3 +140,26 @@ function setMovieClipStop(movieClip, index) {
     movieClip._frames[index].stop = true;
 }
 
+
+function joinBitmaps(parent, array, x, y, direction) {
+    var left = 0;
+    var top = 0;
+
+    var width = 0;
+    var height = 0;
+    
+    for (var i = 0; i < array.length; i++) {
+        var item = array[i];
+        item.x = left;
+        item.y = top;
+        parent.addChild(item);
+
+        left += item.width;
+        width += item.width;
+        height = item.height;
+    }
+    parent.x = x;
+    parent.y = y;
+    parent.width = width;
+    parent.height = height;
+}

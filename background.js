@@ -199,22 +199,11 @@ var PipeRoadClass = function (x, dummy) {
     var tail = assetLoader.imgs.tail;
 
     var headImg = newBitmap(head);
-    var bodyImg = newBitmap(body);
     var tailImg = newBitmap(tail);
-    bodyImg.x = headImg.x + headImg.width;
-    tailImg.x = bodyImg.x + bodyImg.width;
-
-    // console.log(headImg);
-    // console.log(bodyImg);
-
-    this.addChild(headImg);
-    this.addChild(bodyImg);
-    this.addChild(tailImg);
-
-    this.x = x;
-    this.height = headImg.height;
-    this.y = globalConf.height - this.height;
-    this.width = headImg.width + bodyImg.width + tailImg.width;
+    joinBitmaps(this, 
+        [headImg, newBitmap(pickRandom(bodies)), newBitmap(pickRandom(bodies)), newBitmap(pickRandom(bodies)), tailImg], 
+        x, globalConf.height-headImg.height);
+    console.log(this);
 }
 Q.inherit(PipeRoadClass, Q.DisplayObjectContainer);
 
@@ -379,20 +368,6 @@ BackgroundClass.prototype.getY = function (target) {
     }
     return  globalConf.height;
 }
-
-// BackgroundClass.prototype.update = function (timeInfo) {
-    // this.sky.x -= this.sky.speed;
-
-    // if (this.sky.x + assetLoader.imgs.sky.width <= 0) {
-    //     this.sky.x = 0;
-    // }
-
-    // this.backdrop.x -= this.backdrop.speed;
-    // if (this.backdrop.x + assetLoader.imgs.backdrop.width <= 0) {
-    //     this.backdrop.x = 0;
-    // }
-// }
-
 
 // 参考Bitmap
 function SkyClass (props) {
