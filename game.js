@@ -45,6 +45,13 @@
     var GameStage = function (props) {
         // props.width = "100%";
         // props.height = "100%";
+
+        var params = Q.getUrlParams();
+        this.enableDebug = params.enableDebug;
+        this.level = params.level;
+
+        window.stage = this;
+
         var rect = resizeStage();
         console.log(rect);
         var width = rect.width;
@@ -175,8 +182,6 @@
             // 调试矩形区域
             Q.toggleDebugRect(stage);
         }
-
-        stage.enableDebug = enableDebug;
 
         // set the sound preference
         soundInit();

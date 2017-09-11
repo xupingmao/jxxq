@@ -122,7 +122,7 @@ PlayerClass.prototype.fireBullet = function (targetX, targetY) {
     var height = targetY - cy;
     bullet.attack(targetX, targetY);
     // console.log(targetX, targetY);
-    stage.addChild(bullet);
+    stage.actorLayer.addChild(bullet);
 
     assetLoader.sounds.bullet_attack.play();
 }

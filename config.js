@@ -90,7 +90,11 @@ globalConf.update = function () {
     globalConf.roadSpeed = 0.1;
     globalConf.roadY = globalConf.height - globalConf.roadHeight;
 
-    globalConf.maxStepWidth = 0; // 最大跳跃距离
+    if (window.stage.level == "hard") {
+        globalConf.maxStepWidth = 256;
+    } else {
+        globalConf.maxStepWidth = 0; // 最大跳跃距离
+    }
     globalConf.grassSpeed = 20;
     globalConf.gravity = globalConf.gravity * scaleX;
 }

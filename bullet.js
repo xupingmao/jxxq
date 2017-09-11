@@ -44,6 +44,8 @@ Bullet.prototype.init = function () {
             {rect : [0, 0, this.myRectWidth, this.myRectHeight]},
         ]
     )
+
+    this.hit = false;
 }
 
 Bullet.prototype.attack = function (targetX, targetY) {
@@ -104,7 +106,7 @@ Bullet.prototype.onComplete = function () {
 
 Bullet.attack = function (fromX, fromY, targetX, targetY) {
     var bullet = new Bullet({cx: fromX, cy: fromY});
-    window.stage.addChild(bullet);
+    window.stage.actorLayer.addChild(bullet);
     bullet.attack(targetX, targetY);
 }
 
@@ -120,6 +122,9 @@ Bullet.prototype.update = function (timeInfo) {
     //     return false;
     // }
 
+    if (this.hit) {
+        return true;
+    }
     // console.log("check enemy");
     var enemies = stage.background.enemyList;
     var self = this;
@@ -131,6 +136,7 @@ Bullet.prototype.update = function (timeInfo) {
             console.log("hit enemy " + enemy.id);
             self.explode(enemy);
             enemy.attacked(self);
+            self.hit = true;
             return false;
         }
     })

@@ -128,7 +128,7 @@ function ForegroundImage(img, x, speed) {
     var props = {};
 
     var img = newBitmap(img);
-    img.alpha = 0.8;
+    // img.alpha = 0.9;
     props.width = img.width;
     props.height = img.height;
     props.x = x;
@@ -258,18 +258,18 @@ function BackgroundClass(props) {
         assetLoader.imgs.bg.width, 0, 0.1);
 
     // 前景图
-    this.foreground_1 = new ForegroundImage(assetLoader.imgs.foreground_1, 0, 0.5);
-    this.foreground_2 = new ForegroundImage(assetLoader.imgs.foreground_2, this.foreground_1.x + this.foreground_1.width, 0.5);
-    this.foreground_3 = new ForegroundImage(assetLoader.imgs.foreground_3, this.foreground_2.x + this.foreground_2.width, 0.5);
+    var foregroundSpeed = 4;
+    this.foreground_1 = new ForegroundImage(assetLoader.imgs.foreground_1, 0, foregroundSpeed);
+    this.foreground_2 = new ForegroundImage(assetLoader.imgs.foreground_2, this.foreground_1.x + this.foreground_1.width, foregroundSpeed);
+    this.foreground_3 = new ForegroundImage(assetLoader.imgs.foreground_3, this.foreground_2.x + this.foreground_2.width, foregroundSpeed);
 
     this.actorLayer = new ActorLayerClass();
+    stage.actorLayer = this.actorLayer;
 
 
     // 最远景
     this.addChild(this.bg);
     this.addChild(this.bg_2);
-    // this.addChild(this.backdrop);
-    // this.addChild(this.backdrop_2);
     this.addChild(this.actorLayer);
 
     // this.addChild(new WaterClass(assetLoader.imgs.water,
@@ -288,7 +288,7 @@ function BackgroundClass(props) {
     this.addRoad(road1);
     this.addRoad(new PipeRoadClass(road1.x + road1.width + globalConf.maxStepWidth));
 
-    // 敌人
+    // 前景
     this.addChild(this.foreground_1);
     this.addChild(this.foreground_2);
     this.addChild(this.foreground_3);
@@ -363,7 +363,7 @@ BackgroundClass.prototype.update = function (timeInfo) {
         var endRange = globalConf.width - lastRoad.x - lastRoad.width;
         if (endRange >= globalConf.maxStepWidth) {
             // 超过最大的跳跃距离
-            this.addRandRoad0(lastRoad.x+lastRoad.width);
+            this.addRandRoad0(lastRoad.x+lastRoad.width+globalConf.maxStepWidth);
         }
     }
     return true;

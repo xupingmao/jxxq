@@ -45,6 +45,7 @@ function EnemyClass(props) {
     this.rectWidth = rectWidth;
     this.rectHeight = rectHeight;
     this.dead = false;
+    this.life = 2;
     this.count = 0;
 
     for (var i = 0; i < xCount; i++) {
@@ -90,6 +91,9 @@ EnemyClass.prototype.update = function (timeInfo) {
  * 调用该方法时会自己减少生命值,执行死亡过程等等
  */
 EnemyClass.prototype.attacked = function (attackObject) {
+    if (--this.life > 0) {
+        return;
+    }
     if (this.dead) {
         return;
     }
@@ -200,7 +204,7 @@ function createSanguanpao(randRoad) {
     var bullet = new EnemyBullet(assetLoader.imgs.sgp_bullet_2, globalConf.grassSpeed*1.5);
     bullet.offsetX = 0;
     bullet.offsetY = 290;
-    bullet.interval = 50;
+    bullet.interval = 60;
     props.bullet = bullet;
 
     var enemy = new EnemyClass(props);
