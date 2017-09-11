@@ -128,6 +128,7 @@ PlayerClass.prototype.fireBullet = function (targetX, targetY) {
 }
 
 PlayerClass.prototype.attacked = function (atkObj) {
+    console.log("attacked");
     this.life--;
     if (this.life <= 0) {
         this.die();

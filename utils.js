@@ -7,6 +7,10 @@ Array.prototype.remove = Array.prototype.remove || function (object) {
     this.splice(index, 1);
 }
 
+Array.prototype.last = function () {
+  return this[this.length-1];
+}
+
 /**
  * Fps 计数器
  */

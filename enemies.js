@@ -197,7 +197,7 @@ function createSanguanpao(randRoad) {
     props.forwadSpeed = 3;
     props.canFireBullet = true;
 
-    var bullet = new EnemyBullet(assetLoader.imgs.sgp_bullet_2, globalConf.grassSpeed*2);
+    var bullet = new EnemyBullet(assetLoader.imgs.sgp_bullet_2, globalConf.grassSpeed*1.5);
     bullet.offsetX = 0;
     bullet.offsetY = 290;
     bullet.interval = 50;
@@ -270,6 +270,6 @@ function randomEnemy(randRoad) {
     // var value = Math.random();
     // return createSanguanpao(randRoad);
     // var randomCreator = pickOne([createBunker, createLeida, createXiaogunlun, createZhizhujing, createPlane, createSanguanpao]);
-    var randomCreator = pickOne([createBunker, createSanguanpao, createPlane, createSanguanpao]);
+    var randomCreator = pickOne([createBunker, createSanguanpao, createPlane, createZhizhujing, createLeida, createSanguanpao]);
     return randomCreator(randRoad);
 }

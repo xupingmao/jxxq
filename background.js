@@ -201,7 +201,14 @@ var PipeRoadClass = function (x, dummy) {
     var headImg = newBitmap(head);
     var tailImg = newBitmap(tail);
     joinBitmaps(this, 
-        [headImg, newBitmap(pickRandom(bodies)), newBitmap(pickRandom(bodies)), newBitmap(pickRandom(bodies)), tailImg], 
+        [
+            // headImg, 
+            newBitmap(pickRandom(bodies)), 
+            newBitmap(pickRandom(bodies)), 
+            newBitmap(pickRandom(bodies)), 
+            newBitmap(pickRandom(bodies)),
+            // tailImg
+        ], 
         x, globalConf.height-headImg.height);
     console.log(this);
 }
@@ -273,15 +280,15 @@ function BackgroundClass(props) {
     // 道路
 
     this.roadList = [];
+    this.enemyList = [];
     // this.addRoad(new RoadClass(assetLoader.imgs.space_grass,
     //     2, 0, globalConf.height - globalConf.grassHeight));
 
     var road1 = new PipeRoadClass(0);
     this.addRoad(road1);
     this.addRoad(new PipeRoadClass(road1.x + road1.width + globalConf.maxStepWidth));
-    // 敌人
-    this.enemyList = [];
 
+    // 敌人
     this.addChild(this.foreground_1);
     this.addChild(this.foreground_2);
     this.addChild(this.foreground_3);
@@ -306,6 +313,10 @@ BackgroundClass.prototype.removeRoad = function (road) {
 
 BackgroundClass.prototype.addRandRoad = function () {
     var x = globalConf.width;
+    this.addRandRoad0(x);
+}
+
+BackgroundClass.prototype.addRandRoad0 = function (x) {
     var maxY = globalConf.height - globalConf.grassHeight;
     var randHeight = rand(maxY - globalConf.playerHeight, maxY);
     var randRoad = new PipeRoadClass(x, randHeight);
@@ -352,7 +363,7 @@ BackgroundClass.prototype.update = function (timeInfo) {
         var endRange = globalConf.width - lastRoad.x - lastRoad.width;
         if (endRange >= globalConf.maxStepWidth) {
             // 超过最大的跳跃距离
-            this.addRandRoad();
+            this.addRandRoad0(lastRoad.x+lastRoad.width);
         }
     }
     return true;
