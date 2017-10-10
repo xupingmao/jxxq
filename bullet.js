@@ -86,6 +86,14 @@ Bullet.prototype.explode = function (target) {
     this.attackTween.stop();
     this.alpha = 1;
     var self = this;
+    var effect = createMovieClip(assetLoader.imgs.hit_effect_01, 7, 1, 0, 3);
+    setMovieClipStop(effect, 6);
+    effect.x = self.x - 150;
+    effect.y = self.y - 230;
+    effect.width = 300;
+    effect.height = 460;
+    stage.background.actorLayer.addChild(effect);
+
     var tween = new Q.Tween(this, {width: this.width * 3, height: this.height * 3,
             x: this.x - this.width * 1.5,
             y: this.y - this.height * 1.5,
@@ -93,10 +101,12 @@ Bullet.prototype.explode = function (target) {
         {time: 100, onComplete: function () {
             // stage.background.removeEnemy(target);
             // target.attacked();
-            if (self.parent) self.parent.removeChild(self)
+            if (self.parent) {
+                self.parent.removeChild(self);
+            }
         }});
     tween.start();
-    assetLoader.sounds.bom_attack.play();
+    // assetLoader.sounds.bom_attack.play();
 }
 
 Bullet.prototype.onComplete = function () {

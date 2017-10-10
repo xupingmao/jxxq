@@ -119,12 +119,12 @@ function createBitmap(img) {
 
 function createMovieClip(image, cols, rows, rowIndex, interval) {
     var movieClip = new Q.MovieClip({
-    image: image,
-    useFrames: true,
-    interval: interval,
-    x:0,
-    y:0
-  });
+      image: image,
+      useFrames: true,
+      interval: interval,
+      x:0,
+      y:0
+    });
     var rectWidth = image.width / cols;
     var rectHeight = image.height / rows;
     for (var i = 0; i < cols; i++) {
@@ -142,7 +142,15 @@ function reverseMovieClip(movieClip) {
 
 function setMovieClipStop(movieClip, index) {
     movieClip._frames[index].stop = true;
+
+    movieClip.stop = function () {
+      this.paused = true;
+      if (this.parent) {
+        this.parent.removeChild(this);
+      }
+    }
 }
+
 
 
 function joinBitmaps(parent, array, x, y, direction) {

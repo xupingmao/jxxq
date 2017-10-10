@@ -210,7 +210,7 @@ var PipeRoadClass = function (x, dummy) {
             // tailImg
         ], 
         x, globalConf.height-headImg.height);
-    console.log(this);
+    // console.log(this);
 }
 Q.inherit(PipeRoadClass, Q.DisplayObjectContainer);
 

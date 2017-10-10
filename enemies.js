@@ -97,6 +97,7 @@ EnemyClass.prototype.attacked = function (attackObject) {
     if (this.dead) {
         return;
     }
+    assetLoader.sounds.bom_attack.play();
     this.dead = true;
     // TODO 暂时实现成一次攻击就死亡
     var xCount = this.xCount;

@@ -40,6 +40,7 @@ var assetLoader = (function() {
         'enemy_8': 'imgs/enemy_8.png',
         'enemy_9': 'imgs/enemy_9.png',
         'box_1': 'imgs/box_1.png',
+        'hit_effect_01': 'imgs/hit_effect_01.png',
         'foreground_1': 'imgs/foreground_1.png',
         'foreground_2': 'imgs/foreground_2.png',
         'foreground_3': 'imgs/foreground_3.png',
