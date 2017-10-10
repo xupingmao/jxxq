@@ -65,8 +65,8 @@
         // 1920 * 1300 是希望展示的大小,以高度为准，水平多余的砍掉或者不足的补充
         // quarkjs通过css style来缩放stage
 
-        props.width = 1300 * width / height;
-        props.height = 1300;
+        props.width = 650 * width / height;
+        props.height = 650;
 
         var scale = height / props.height;
 

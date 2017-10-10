@@ -57,7 +57,7 @@ Bullet.prototype.attack = function (targetX, targetY) {
     var cy = this.y - this.height/2;
 
     var distance = globalConf.width;
-    var speed = 2;
+    var speed = 1;
 
     if (targetX == cx) {
         x1 = cx;
@@ -88,10 +88,10 @@ Bullet.prototype.explode = function (target) {
     var self = this;
     var effect = createMovieClip(assetLoader.imgs.hit_effect_01, 7, 1, 0, 3);
     setMovieClipStop(effect, 6);
-    effect.x = self.x - 150;
-    effect.y = self.y - 230;
-    effect.width = 300;
-    effect.height = 460;
+    effect.x = self.x - 150 / 2;
+    effect.y = self.y - 230 / 2;
+    effect.width = 300 / 2;
+    effect.height = 460 / 2;
     stage.background.actorLayer.addChild(effect);
 
     var tween = new Q.Tween(this, {width: this.width * 3, height: this.height * 3,

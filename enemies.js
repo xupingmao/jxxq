@@ -204,7 +204,7 @@ function createSanguanpao(randRoad) {
 
     var bullet = new EnemyBullet(assetLoader.imgs.sgp_bullet_2, globalConf.grassSpeed*1.5);
     bullet.offsetX = 0;
-    bullet.offsetY = 290;
+    bullet.offsetY = 290 / 2;
     bullet.interval = 60;
     props.bullet = bullet;
 
