@@ -4,14 +4,17 @@
  * @constructor
  */
 var Bullet = function(props){
-    var width = globalConf.bulletWidth;
-    var height = globalConf.bulletHeight;
-    props.x = props.cx - width / 2;
-    props.y = props.cy - height / 2;
-
     if (!props.image) {
         props.image = assetLoader.imgs.bullet;
     }
+
+    var image = props.image;
+
+    var width = image.width;
+    var height = image.height;
+
+    props.x = props.cx;
+    props.y = props.cy - height / 2;
 
     Bullet.superClass.constructor.call(this,props);
     this.completed = false;
@@ -25,12 +28,12 @@ var Bullet = function(props){
     if (props.rectWidth) {
         this.myRectWidth = props.rectWidth;
     } else {
-        this.myRectWidth = 64;
+        this.myRectWidth = width;
     }
     if (props.rectHeight) {
         this.myRectHeight = props.rectHeight;
     } else {
-        this.myRectHeight = 64;
+        this.myRectHeight = height;
     }
     
     this.init();
@@ -50,11 +53,13 @@ Bullet.prototype.init = function () {
 
 Bullet.prototype.attack = function (targetX, targetY) {
     var self = this;
-
     var x1, y1;
-
     var cx = this.x - this.width/2;
     var cy = this.y - this.height/2;
+
+    if (this.onlyHorizontal) {
+        targetY = cy;
+    }
 
     var distance = globalConf.width;
     var speed = 1;
@@ -86,12 +91,14 @@ Bullet.prototype.explode = function (target) {
     this.attackTween.stop();
     this.alpha = 1;
     var self = this;
-    var effect = createMovieClip(assetLoader.imgs.hit_effect_01, 7, 1, 0, 3);
+    var effect = createMovieClip(assetLoader.imgs.hit_effect_01, 8, 1, 0, 3);
     setMovieClipStop(effect, 6);
-    effect.x = self.x - 150 / 2;
-    effect.y = self.y - 230 / 2;
-    effect.width = 300 / 2;
-    effect.height = 460 / 2;
+    var width = effect.width;
+    var height = effect.height;
+    effect.x = self.x - width / 2;
+    effect.y = self.y - height / 2;
+    effect.width = width;
+    effect.height = height;
     stage.background.actorLayer.addChild(effect);
 
     var tween = new Q.Tween(this, {width: this.width * 3, height: this.height * 3,
@@ -117,7 +124,11 @@ Bullet.prototype.onComplete = function () {
 Bullet.attack = function (fromX, fromY, targetX, targetY) {
     var bullet = new Bullet({cx: fromX, cy: fromY});
     window.stage.actorLayer.addChild(bullet);
-    bullet.attack(targetX, targetY);
+    if (this.onlyHorizontal) {
+        bullet.attack(targetX, fromY);
+    } else {
+        bullet.attack(targetX, targetY);
+    }
 }
 
 Bullet.prototype.update = function (timeInfo) {
@@ -191,21 +202,23 @@ FogBullet.prototype.onComplete = function () {
  * 镭射子弹
  */
 var LaserBullet = function (props) {
-    var width = globalConf.bulletWidth;
-    var height = globalConf.bulletHeight;
+    props.image = assetLoader.imgs.bullet_2;
+
+    var image = assetLoader.imgs.bullet_2;
+    var width = image.width;
+    var height = image.height;
     props.x = props.cx - width / 2;
     props.y = props.cy - height / 2;
-
-    props.image = assetLoader.imgs.bullet_1;
 
     LaserBullet.superClass.constructor.call(this,props);
     this.completed = false;
     this.target = null;
 
-    this.width = width * 2;
-    this.height = height * 2;
+    this.width = width;
+    this.height = height;
 
     this.attackTween = undefined;
+    this.onlyHorizontal = true;
     this.init();
 }
 
@@ -230,10 +243,7 @@ function createBullet(cx, cy, targetX, targetY) {
                 rotation = Math.acos(y / distance) * 180 / Math.PI;
             }
         }
-        return new LaserBullet({cx: cx, cy: cy, 
-            rotation: rotation, 
-            rectWidth: 30, 
-            rectHeight: 44});
+        return new LaserBullet({cx: cx, cy: cy});
     } else {
         return new Bullet({cx: cx, cy: cy});
     }

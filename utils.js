@@ -133,6 +133,8 @@ function createMovieClip(image, cols, rows, rowIndex, interval) {
         var rect = [x, y, rectWidth, rectHeight];
         movieClip.addFrame({rect: rect, interval: interval});
     }
+    movieClip.width = rectWidth;
+    movieClip.height = rectHeight;
     return movieClip;
 }
 

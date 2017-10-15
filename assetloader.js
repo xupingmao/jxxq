@@ -30,6 +30,7 @@ var assetLoader = (function() {
         'slime': 'imgs/slime.png',
         'bullet': 'imgs/bullet.png',
         'bullet_1': 'imgs/bullet_1.png',
+        'bullet_2': 'imgs/bullet_2.png',
         'enemy_1': 'imgs/enemy_1.png',
         'enemy_2': 'imgs/enemy_2.png',
         'enemy_3': 'imgs/enemy_3.png',
