@@ -139,7 +139,17 @@ function ForegroundImage(img, x, speed) {
 }
 
 Q.inherit(ForegroundImage, Q.DisplayObjectContainer);
-ForegroundImage.prototype.update = BackgroundImage.prototype.update;
+ForegroundImage.prototype.update = function () {
+    this.x -= this.speed;
+    if (this.x + this.width < 0) {
+        this.parent.removeChild(this);
+        setTimeout(function () {
+            var img = pickRandom([assetLoader.imgs.foreground_1, assetLoader.imgs.foreground_2, assetLoader.imgs.foreground_3]);
+            var randForground = new ForegroundImage(img, globalConf.width, globalConf.foregroundSpeed);
+            stage.background.addChild(randForground);
+        }, 7000);
+    }
+}
 
 
 function ScrollableClass() {
@@ -258,7 +268,7 @@ function BackgroundClass(props) {
         assetLoader.imgs.bg.width, 0, 0.1);
 
     // 前景图
-    var foregroundSpeed = 4;
+    var foregroundSpeed = globalConf.foregroundSpeed;
     this.foreground_1 = new ForegroundImage(assetLoader.imgs.foreground_1, 0, foregroundSpeed);
     this.foreground_2 = new ForegroundImage(assetLoader.imgs.foreground_2, this.foreground_1.x + this.foreground_1.width, foregroundSpeed);
     this.foreground_3 = new ForegroundImage(assetLoader.imgs.foreground_3, this.foreground_2.x + this.foreground_2.width, foregroundSpeed);

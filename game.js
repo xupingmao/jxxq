@@ -14,8 +14,13 @@
     var enableDebug = ("true" === Q.getUrlParams().debug);
     var fpsCounter;
     var canvasBuffer;
+    var canUseLocalStorage = false;
 
-    var canUseLocalStorage = 'localStorage' in window && window.localStorage !== null;
+    try {
+        canUseLocalStorage = "localStorage" in window && window.localStorage !== null;
+    } catch (e) {
+        // IE本地模式不支持
+    }
 
     function resizeStage() {
         var canvasWidth = $("#canvas").width();
@@ -293,6 +298,7 @@
         stage.background = background;
         stage.player = player;
         stage.gameOver = gameOver;
+        stage.textBoard = textBoard;
 
         quark_timer.addListener(stage);   // 舞台刷新
         quark_timer.addListener(Q.Tween); // 动画

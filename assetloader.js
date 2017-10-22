@@ -46,6 +46,10 @@ var assetLoader = (function() {
         'foreground_2': 'imgs/foreground_2.png',
         'foreground_3': 'imgs/foreground_3.png',
         'sgp_bullet_2': 'imgs/sgp_bullet_2.png',
+        'numbers': 'imgs/numbers.png',
+        'kill': 'imgs/kill.png',
+        'life': 'imgs/life.png',
+        'score': 'imgs/score.png',
     };
 
   // sounds dictionary

@@ -35,6 +35,8 @@ globalConf.bulletHeight = 16;
 
 globalConf.grassSpeed = 20;
 globalConf.gravity = 5;
+// 前景速度
+globalConf.foregroundSpeed = 4;
 
 globalConf.update = function () {
     // 实际大小 1920 * 1080

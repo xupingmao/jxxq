@@ -105,15 +105,19 @@ function pickOne(array) {
 }
 
 
-function createBitmap(img) {
+function createBitmap(img, x, y, rect) {
     var width = img.width;
     var height = img.height;
     var bitmap = new Quark.Bitmap({
         image: img,
         width: width,
         height: height,
-        rect : [0, 0, width, height]
+        rect : rect
     });
+    x = x || 0;
+    y = y || 0;
+    bitmap.x = x;
+    bitmap.y = y;
     return bitmap;
 }
 
@@ -176,4 +180,52 @@ function joinBitmaps(parent, array, x, y, direction) {
     parent.y = y;
     parent.width = width;
     parent.height = height;
+}
+
+function objLeft(obj) {
+  return obj.x;
+}
+
+function objRight(obj) {
+  return obj.x + obj.width;
+}
+
+function objTop(obj) {
+  return obj.y;
+}
+
+function objBottom(obj) {
+  return obj.y + obj.height;
+}
+
+// 一些扩展的类
+
+function MyContainer (props) {
+  MyContainer.superClass.constructor.call(this, props);
+  this.right = 0;
+  this.bottom = 0;
+}
+Q.inherit(MyContainer, Q.DisplayObjectContainer);
+
+MyContainer.prototype.addVirtical = function () {
+
+}
+
+MyContainer.prototype.addHorizontal = function () {
+  var height = 0;
+  for (var i = 0; i < arguments.length; i++) {
+    var obj = arguments[i];
+    obj.x = this.right;
+    this.right += obj.width;
+    height = obj.height;
+    this.addChild(obj);
+  }
+  this.width = this.right;
+  this.height = height;
+}
+
+MyContainer.prototype.reset = function () {
+  this.right = 0;
+  this.bottom = 0;
+  this.removeAllChildren();
 }
