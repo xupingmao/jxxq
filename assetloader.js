@@ -47,6 +47,7 @@ var assetLoader = (function() {
         'foreground_3': 'imgs/foreground_3.png',
         'sgp_bullet_2': 'imgs/sgp_bullet_2.png',
         'numbers': 'imgs/numbers.png',
+        'numbers_red': 'imgs/numbers_red.png',
         'kill': 'imgs/kill.png',
         'life': 'imgs/life.png',
         'score': 'imgs/score.png',

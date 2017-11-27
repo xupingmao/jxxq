@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: arial, sans-serif;
   font-size: 16px;
@@ -181,4 +186,18 @@ a {
   width: 100%;
   height: 100%;
   position: absolute;
+}
+
+#startBtn {
+  background: url(./imgs/start_btn.png);
+  background-size: cover;
+  border: none;
+  height: 66px;
+  width: 231px;
+  /*margin-top: 45%;*/
+}
+
+#startBtn:hover {
+  background: url(./imgs/start_btn_down.png);
+  background-size: cover;
 }

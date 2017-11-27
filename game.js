@@ -22,6 +22,8 @@
         // IE本地模式不支持
     }
 
+    $("#startBtn").css({"margin-top": window.innerHeight * 0.6})
+
     function resizeStage() {
         var canvasWidth = $("#canvas").width();
         var canvasHeight = $("#canvas").height();

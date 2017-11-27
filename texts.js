@@ -61,8 +61,10 @@ function createNumberContainer(prev) {
     return container;
 }
 
-function createNumber(n) {
-    var img = assetLoader.imgs.numbers;
+function createNumber(n, img) {
+    if (!img) {
+        img = assetLoader.imgs.numbers;
+    }
     var width = img.width;
     var height = img.height;
     var partWidth = width / 10;
@@ -72,14 +74,14 @@ function createNumber(n) {
     return bitmap;
 }
 
-function drawNumber(parent, value) {
+function drawNumber(parent, value, img) {
     value = parseInt(value).toString();
     if (value != parent.numVal) {    
         parent.numVal = value;
         parent.reset();
         for (var i = 0; i < value.length; i++) {
             var c = value.charAt(i);
-            parent.addHorizontal(createNumber(c));
+            parent.addHorizontal(createNumber(c, img));
         }
     }
 }
@@ -90,7 +92,7 @@ TextBoard.prototype.update = function (timeInfo) {
     // this.killedText.text = "击杀数:" + stage.player.killed;
 
     drawNumber(this.scoreImgContainer, stage.score);
-    drawNumber(this.lifeImgContainer, stage.player.life);
+    drawNumber(this.lifeImgContainer, stage.player.life, assetLoader.imgs.numbers_red);
     drawNumber(this.killImgContainer, stage.player.killed);
 
     if (stage.enableDebug) {    
